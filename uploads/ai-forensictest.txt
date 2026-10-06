@@ -1,0 +1,12 @@
+2026-09-26 08:00:01 INFO User login successful - Ali
+2026-09-26 08:05:10 INFO Dashboard accessed - Ali
+2026-09-26 08:10:15 INFO Report opened - Ali
+2026-09-26 08:15:20 INFO Evidence viewed - Ali
+2026-09-26 08:20:25 INFO Case opened - Ali
+2026-09-26 08:25:30 INFO Timeline viewed - Ali
+2026-09-26 08:30:35 INFO Evidence uploaded - Ali
+2026-09-26 08:35:40 WARNING Multiple failed login attempts - Ali
+2026-09-26 08:35:41 WARNING Multiple failed login attempts - Ali
+2026-09-26 08:35:42 WARNING Multiple failed login attempts - Ali
+2026-09-26 08:35:43 ERROR Suspicious login detected - Ali
+2026-09-26 08:40:00 INFO Dashboard accessed - Ali

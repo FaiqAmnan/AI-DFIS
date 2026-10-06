@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI-DFIS | Timeline Reconstruction</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            width: 250px;
+            background: #111827;
+            color: white;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 24px 20px;
+            border-bottom: 1px solid #273244;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: #2563eb;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .logo span {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .sidebar-menu {
+            padding: 20px 12px;
+            flex: 1;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #cbd5e1;
+            text-decoration: none;
+            padding: 12px 14px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background: #1f2937;
+            color: white;
+        }
+
+        .menu-item.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-title {
+            font-size: 10px;
+            color: #6b7280;
+            font-weight: bold;
+            margin: 22px 14px 8px;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-bottom {
+            padding: 15px;
+            border-top: 1px solid #273244;
+        }
+
+        .system-status {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 15px;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            margin-right: 7px;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #cbd5e1;
+            text-decoration: none;
+            padding: 10px;
+            font-size: 13px;
+        }
+
+        /* MAIN */
+
+        .main-content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 30px;
+        }
+
+        /* HEADER */
+
+        .page-header {
+            background: white;
+            padding: 24px;
+            border-radius: 14px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .page-header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .page-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 12px;
+            background: #eff6ff;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+        }
+
+        .page-header h1 {
+            margin: 0 0 5px;
+            font-size: 24px;
+        }
+
+        .page-header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            background: #ecfdf5;
+            color: #059669;
+            padding: 9px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* CASE */
+
+        .section-title {
+            margin: 0 0 14px;
+            font-size: 17px;
+        }
+
+        .case-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 24px;
+        }
+
+        .case-card {
+            background: white;
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .case-label {
+            color: #6b7280;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-bottom: 7px;
+        }
+
+        .case-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* TIMELINE */
+
+        .timeline-panel {
+            background: white;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .timeline-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .event-count {
+            background: #eff6ff;
+            color: #2563eb;
+            padding: 7px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .timeline {
+            position: relative;
+            margin-left: 15px;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #dbeafe;
+        }
+
+        .timeline-event {
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 25px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 3px;
+            top: 5px;
+            width: 16px;
+            height: 16px;
+            background: #2563eb;
+            border: 3px solid #dbeafe;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .timeline-dot.warning {
+            background: #f59e0b;
+            border-color: #fef3c7;
+        }
+
+        .timeline-dot.critical {
+            background: #dc2626;
+            border-color: #fee2e2;
+        }
+
+        .timeline-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 16px;
+            background: #fff;
+        }
+
+        .timeline-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .timeline-time {
+            font-family: Consolas, monospace;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .timeline-level {
+            font-size: 10px;
+            font-weight: bold;
+            padding: 5px 9px;
+            border-radius: 10px;
+        }
+
+        .level-info {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .level-warning {
+            background: #fef3c7;
+            color: #a16207;
+        }
+
+        .level-error {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .timeline-message {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .timeline-user {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .empty-timeline {
+            text-align: center;
+            padding: 50px;
+            color: #9ca3af;
+        }
+
+        .empty-timeline i {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        /* SUMMARY */
+
+        .timeline-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 24px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .summary-card i {
+            color: #2563eb;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .summary-card h3 {
+            margin: 0 0 5px;
+            font-size: 14px;
+        }
+
+        .summary-card p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        @media (max-width: 1000px) {
+
+            .case-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .timeline-summary {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        .sidebar {
+            width: 260px;
+            background: #101827;
+            z-index: 100;
+        }
+
+        .logo {
+            padding: 25px 22px;
+            border-bottom-color: rgba(255,255,255,0.08);
+        }
+
+        .logo-icon {
+            font-size: 19px;
+        }
+
+        .logo .brand-wordmark {
+            font-size: 24px;
+            letter-spacing: 0.2em;
+            line-height: 1;
+        }
+
+        .menu-item {
+            gap: 13px;
+            margin-bottom: 4px;
+            color: #aeb9c9;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover {
+            background: #1c2738;
+        }
+
+        .menu-item i {
+            width: 18px;
+        }
+
+        .menu-title {
+            padding: 22px 14px 8px;
+            margin: 0;
+            color: #64748b;
+        }
+
+        .sidebar-bottom {
+            padding: 15px;
+            border-top-color: rgba(255,255,255,0.08);
+        }
+
+        .main-content {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .logo > div:last-child,
+            .menu-item span,
+            .menu-title,
+            .system-status,
+            .logout {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="dashboard-container">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <div>
+                <h2 class="brand-wordmark">AI-DFIS</h2>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+            <a href="/dashboard" class="menu-item">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/investigations" class="menu-item">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>Investigations</span>
+            </a>
+
+            <div class="menu-title">
+                ANALYSIS
+            </div>
+
+
+            <a href="/log-analysis" class="menu-item">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Log Analysis</span>
+            </a>
+
+            {% if filename %}
+<a href="/timeline?file={{ filename }}" class="menu-item active">
+{% else %}
+<a href="/timeline" class="menu-item active">
+{% endif %}
+
+    <i class="fa-solid fa-timeline"></i>
+    <span>Timeline</span>
+
+</a>
+
+            {% if filename %}
+<a href="/ai-detection?file={{ filename }}" class="menu-item">
+{% else %}
+<a href="/ai-detection" class="menu-item">
+{% endif %}
+
+    <i class="fa-solid fa-robot"></i>
+    <span>AI Detection</span>
+
+</a>
+
+
+            <div class="menu-title">
+                SYSTEM
+            </div>
+
+
+            {% if filename %}
+            <a href="/analytics?file={{ filename }}" class="menu-item">
+            {% else %}
+            <a href="/analytics" class="menu-item">
+            {% endif %}
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Analytics</span>
+            </a>
+
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-file-pdf"></i>
+                <span>Reports</span>
+            </a>
+
+            {% if session.get("role") == "Admin" %}
+            <a href="/users" class="menu-item">
+                <i class="fa-solid fa-users"></i>
+                <span>Users</span>
+            </a>
+            {% endif %}
+
+            <a href="/settings" class="menu-item">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="system-status">
+                <span class="status-dot"></span>
+                System Online
+            </div>
+
+            <a href="/logout" class="logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+
+        <!-- HEADER -->
+
+        <div class="page-header">
+
+            <div class="page-header-left">
+
+                <div class="page-icon">
+                    <i class="fa-solid fa-timeline"></i>
+                </div>
+
+                <div>
+
+                    <h1>Timeline Reconstruction</h1>
+
+                    <p>
+                        Chronological reconstruction of digital forensic events
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="status-badge">
+
+                <i class="fa-solid fa-circle-check"></i>
+                Timeline Generated
+
+            </div>
+
+        </div>
+
+
+
+        <!-- CASE INFORMATION -->
+
+        <h2 class="section-title">
+            Case Information
+        </h2>
+
+
+        <div class="case-grid">
+
+
+            <div class="case-card">
+
+                <div class="case-label">
+                    Case ID
+                </div>
+
+                <div class="case-value">
+                    INV-2026-024
+                </div>
+
+            </div>
+
+
+            <div class="case-card">
+
+                <div class="case-label">
+                    Investigation
+                </div>
+
+                <div class="case-value">
+                    Unauthorized System Access
+                </div>
+
+            </div>
+
+
+            <div class="case-card">
+
+                <div class="case-label">
+                    Evidence File
+                </div>
+
+                <div class="case-value">
+                    {{ filename if filename else "test_log.txt" }}
+                </div>
+
+            </div>
+
+
+            <div class="case-card">
+
+                <div class="case-label">
+                    Events
+                </div>
+
+                <div class="case-value">
+                    {{ total_events }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- TIMELINE -->
+
+        <section class="timeline-panel">
+
+            <div class="timeline-header">
+
+                <h2>
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    Investigation Timeline
+                </h2>
+
+                <span class="event-count">
+                    {{ total_events }} Events
+                </span>
+
+            </div>
+
+
+            {% if events %}
+
+            <div class="timeline">
+
+
+                {% for event in events %}
+
+                <div class="timeline-event">
+
+
+                    {% if event.level == "ERROR" %}
+
+                    <div class="timeline-dot critical"></div>
+
+                    {% elif event.level == "WARNING" %}
+
+                    <div class="timeline-dot warning"></div>
+
+                    {% else %}
+
+                    <div class="timeline-dot"></div>
+
+                    {% endif %}
+
+
+                    <div class="timeline-card">
+
+
+                        <div class="timeline-top">
+
+                            <span class="timeline-time">
+
+                                {{ event.date }}
+                                {{ event.time }}
+
+                            </span>
+
+
+                            {% if event.level == "ERROR" %}
+
+                            <span class="timeline-level level-error">
+                                ERROR
+                            </span>
+
+                            {% elif event.level == "WARNING" %}
+
+                            <span class="timeline-level level-warning">
+                                WARNING
+                            </span>
+
+                            {% else %}
+
+                            <span class="timeline-level level-info">
+                                INFO
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="timeline-message">
+
+                            {{ event.message }}
+
+                        </div>
+
+
+                        <div class="timeline-user">
+
+                            <i class="fa-solid fa-user"></i>
+
+                            User:
+                            {{ event.username }}
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+
+            </div>
+
+
+            {% else %}
+
+
+            <div class="empty-timeline">
+
+                <i class="fa-solid fa-timeline"></i>
+
+                <p>
+                    No events available for timeline reconstruction.
+                </p>
+
+                <p>
+                    Please analyze an evidence file first.
+                </p>
+
+            </div>
+
+
+            {% endif %}
+
+
+        </section>
+
+
+
+        <!-- SUMMARY -->
+
+        <div class="timeline-summary">
+
+
+            <div class="summary-card">
+
+                <i class="fa-solid fa-list"></i>
+
+                <h3>
+                    Total Events
+                </h3>
+
+                <p>
+                    {{ total_events }} events reconstructed
+                </p>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                <h3>
+                    Suspicious Events
+                </h3>
+
+                <p>
+                    {{ suspicious_events }} suspicious events identified
+                </p>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+                <h3>
+                    Next Stage
+                </h3>
+
+                <p>
+                    AI anomaly detection
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

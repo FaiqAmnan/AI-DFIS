@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AI-DFIS | Evidence Upload</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+
+        body {
+            background: #f4f6f9;
+            color: #1f2937;
+        }
+
+
+        /* NAVBAR */
+
+        .navbar {
+            background: #111827;
+            color: white;
+            padding: 18px 35px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 0.12em;
+        }
+
+        .logo-mark {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.35);
+            border-radius: 9px;
+            background: #2563eb;
+            font-size: 13px;
+            letter-spacing: 0;
+        }
+
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+
+            background: #374151;
+
+            padding: 10px 18px;
+
+            border-radius: 6px;
+        }
+
+
+        .back-btn:hover {
+            background: #4b5563;
+        }
+
+
+        /* MAIN CONTAINER */
+
+        .container {
+            max-width: 900px;
+
+            margin: 40px auto;
+
+            padding: 20px;
+        }
+
+
+        /* TITLE */
+
+        .title {
+            margin-bottom: 25px;
+        }
+
+
+        .title h1 {
+            font-size: 30px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .title p {
+            color: #6b7280;
+        }
+
+
+        /* UPLOAD BOX */
+
+        .upload-box {
+            background: white;
+
+            padding: 40px;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,0.08);
+        }
+
+
+        /* DROP AREA */
+
+        .drop-area {
+            border: 2px dashed #9ca3af;
+
+            border-radius: 10px;
+
+            padding: 50px 20px;
+
+            text-align: center;
+
+            margin-bottom: 25px;
+        }
+
+
+        .drop-area h2 {
+            margin-bottom: 10px;
+        }
+
+
+        .drop-area p {
+            color: #6b7280;
+
+            margin-bottom: 20px;
+        }
+
+
+        input[type="file"] {
+            margin: 15px 0;
+        }
+
+
+        /* UPLOAD BUTTON */
+
+        .upload-btn {
+            display: block;
+
+            width: 100%;
+
+            padding: 14px;
+
+            border: none;
+
+            border-radius: 7px;
+
+            background: #2563eb;
+
+            color: white;
+
+            font-size: 16px;
+
+            cursor: pointer;
+        }
+
+
+        .upload-btn:hover {
+            background: #1d4ed8;
+        }
+
+
+        /* INFORMATION BOX */
+
+        .info {
+            margin-top: 25px;
+
+            background: #f9fafb;
+
+            padding: 20px;
+
+            border-radius: 8px;
+        }
+
+
+        .info h3 {
+            margin-bottom: 15px;
+        }
+
+
+        .info p {
+            margin: 7px 0;
+
+            color: #4b5563;
+        }
+
+
+        /* FILE CARD */
+
+        .file-card {
+
+            background: white;
+
+            padding: 15px;
+
+            margin-top: 12px;
+
+            border-radius: 8px;
+
+            border: 1px solid #e5e7eb;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+        }
+
+
+        .file-name {
+
+            font-size: 15px;
+
+            font-weight: 500;
+
+            color: #374151;
+        }
+
+
+        /* ANALYZE BUTTON */
+
+        .analyze-btn {
+
+            background: #2563eb;
+
+            color: white;
+
+            padding: 9px 15px;
+
+            border-radius: 6px;
+
+            text-decoration: none;
+
+            font-size: 14px;
+        }
+
+
+        .analyze-btn:hover {
+            background: #1d4ed8;
+        }
+
+
+        /* EMPTY MESSAGE */
+
+        .empty-message {
+
+            color: #6b7280;
+
+            padding: 10px 0;
+        }
+
+
+        /* SUCCESS MESSAGE */
+
+        .success-message {
+
+            background: #ecfdf5;
+
+            color: #047857;
+
+            padding: 12px;
+
+            border-radius: 6px;
+
+            margin-bottom: 20px;
+
+            border: 1px solid #a7f3d0;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- NAVIGATION -->
+
+    <div class="navbar">
+
+        <div class="logo">
+            <span class="logo-mark">AI</span>
+            <span>
+                AI-DFIS
+            </span>
+        </div>
+
+
+        <a href="{{ url_for('evidence', investigation_id=selected_investigation.id) if selected_investigation else url_for('evidence') }}"
+           class="back-btn">
+
+            ← Back to Evidence
+
+        </a>
+
+    </div>
+
+
+
+    <!-- MAIN CONTENT -->
+
+    <div class="container">
+
+
+        <!-- TITLE -->
+
+        <div class="title">
+
+            <h1>
+                Evidence Upload
+            </h1>
+
+            <p>
+                {% if selected_investigation %}
+                Upload evidence for {{ selected_investigation.case_id }}: {{ selected_investigation.case_name }}.
+                {% else %}
+                Upload digital evidence and investigation files for analysis.
+                {% endif %}
+            </p>
+
+        </div>
+
+
+
+        <!-- UPLOAD BOX -->
+
+        <div class="upload-box">
+
+
+            <!-- UPLOAD FORM -->
+
+            <form action="{{ url_for('upload', investigation_id=selected_investigation.id) if selected_investigation else url_for('upload') }}"
+                  method="POST"
+                  enctype="multipart/form-data">
+
+
+                <div class="drop-area">
+
+
+                    <h2>
+                        📁 Upload Digital Evidence
+                    </h2>
+
+
+                    <p>
+                        Select a file from your computer to upload
+                    </p>
+
+
+                    <input
+                        type="file"
+                        name="evidence"
+                        required
+                    >
+
+                </div>
+
+
+
+                <button
+                    type="submit"
+                    class="upload-btn">
+
+                    Upload Evidence
+
+                </button>
+
+
+            </form>
+
+
+
+            <!-- SUPPORTED FILES -->
+
+            <div class="info">
+
+
+                <h3>
+                    Supported Evidence
+                </h3>
+
+
+                <p>
+                    • System log files
+                </p>
+
+
+                <p>
+                    • User activity logs
+                </p>
+
+
+                <p>
+                    • Investigation data
+                </p>
+
+
+                <p>
+                    • CSV files
+                </p>
+
+
+                <p>
+                    • TXT files
+                </p>
+
+
+                <p>
+                    • LOG files
+                </p>
+
+
+            </div>
+
+
+
+            <!-- UPLOADED EVIDENCE -->
+
+            <div class="info">
+
+
+                <h3>
+                    Uploaded Evidence
+                </h3>
+
+
+
+                {% if uploaded_files %}
+
+
+                    {% for file in uploaded_files %}
+
+
+                        <div class="file-card">
+
+
+                            <div class="file-name">
+
+                                📄 {{ file }}
+
+                            </div>
+
+
+
+                            <a
+                                href="/log-analysis?file={{ file }}"
+                                class="analyze-btn">
+
+                                Analyze
+
+                            </a>
+
+
+                        </div>
+
+
+                    {% endfor %}
+
+
+                {% else %}
+
+
+                    <p class="empty-message">
+
+                        No evidence uploaded yet.
+
+                    </p>
+
+
+                {% endif %}
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</body>
+
+</html>

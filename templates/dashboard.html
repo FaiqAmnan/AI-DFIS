@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-DFIS | Dashboard</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- SIDEBAR -->
+<aside class="sidebar">
+
+    <div class="logo">
+        <div class="logo-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+
+        <div>
+            <h2 class="brand-wordmark">AI-DFIS</h2>
+        </div>
+    </div>
+
+
+    <nav class="sidebar-menu">
+
+        <!-- MAIN -->
+
+        <a href="/dashboard" class="menu-item active">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+
+
+        <a href="/investigations" class="menu-item">
+            <i class="fa-solid fa-folder-open"></i>
+            <span>Investigations</span>
+        </a>
+
+
+        <!-- ANALYSIS -->
+
+        <div class="menu-title">
+            ANALYSIS
+        </div>
+
+
+        <a href="/log-analysis" class="menu-item">
+            <i class="fa-solid fa-file-lines"></i>
+            <span>Log Analysis</span>
+        </a>
+
+
+         <a href="/timeline" class="menu-item ">
+                <i class="fa-solid fa-timeline"></i>
+                <span>Timeline</span>
+            </a>
+
+
+        <a href="/ai-detection" class="menu-item ">
+                <i class="fa-solid fa-robot"></i>
+                <span>AI Detection</span>
+            </a>
+
+
+        <!-- SYSTEM -->
+
+        <div class="menu-title">
+            SYSTEM
+        </div>
+
+
+        <a href="/analytics" class="menu-item ">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Analytics</span>
+        </a>
+
+
+        <a href="/reports" class="menu-item">
+            <i class="fa-solid fa-file-pdf"></i>
+            <span>Reports</span>
+        </a>
+
+        <a href="/audit-trail" class="menu-item">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Audit Trail</span>
+        </a>
+
+        {% if session.get("role") == "Admin" %}
+        <a href="/users" class="menu-item">
+            <i class="fa-solid fa-users"></i>
+            <span>Users</span>
+        </a>
+        {% endif %}
+
+
+        <a href="/settings" class="menu-item">
+            <i class="fa-solid fa-gear"></i>
+            Settings
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+        <div class="system-status">
+            <span class="status-dot"></span>
+            System Online
+        </div>
+
+        <a href="/logout" class="logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+
+    </div>
+
+</aside>
+
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <!-- TOP BAR -->
+            <header class="topbar">
+
+                <div>
+                    <h1>Dashboard</h1>
+                    <p>Digital Forensic Investigation Overview</p>
+                </div>
+
+                <div class="user-area">
+
+                    <div class="notification">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </div>
+
+                    <div class="user-profile">
+
+                        <div class="avatar">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+
+                        <div class="user-info">
+                            <strong>{{ session.get("name", "User") }}</strong>
+                            <span>{{ session.get("role", "User") }}</span>
+                        </div>
+
+                        <i class="fa-solid fa-chevron-down"></i>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- DASHBOARD CONTENT -->
+            <section class="dashboard-content">
+
+                <div class="welcome-box">
+
+                    <div>
+                        <span class="welcome-label">WELCOME BACK</span>
+
+                        <h2>Digital Forensic Investigation Center</h2>
+
+                        <p>
+                            Monitor investigations, analyze digital evidence,
+                            reconstruct timelines and detect suspicious activities
+                            using AI-assisted analysis.
+                        </p>
+                    </div>
+
+                    <div class="welcome-icon">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    </div>
+
+                </div>
+
+
+                <!-- STATISTICS -->
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-folder-open"></i>
+                        </div>
+
+                        <div>
+                            <span>Total Investigations</span>
+                            <h3>{{ total_investigations }}</h3>
+                            <small>{{ active_investigations }} active</small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-database"></i>
+                        </div>
+
+                        <div>
+                            <span>Evidence Files</span>
+                            <h3>{{ total_evidence }}</h3>
+                            <small>{{ uploaded_evidence }} currently uploaded</small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+
+                        <div>
+                            <span>Suspicious Activities</span>
+                            <h3>{{ suspicious_activities }}</h3>
+                            <small>Warnings and errors in uploaded logs</small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+
+                        <div>
+                            <span>AI Anomalies</span>
+                            <h3>{{ ai_anomalies }}</h3>
+                            <small>{{ high_risk_anomalies }} high risk</small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- LOWER SECTION -->
+                <div class="dashboard-grid">
+
+                    <!-- RECENT INVESTIGATIONS -->
+                    <div class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <h3>Recent Investigations</h3>
+                                <span>Latest forensic cases</span>
+                            </div>
+
+                            <button class="view-button">
+                                View All
+                            </button>
+
+                        </div>
+
+
+                        <div class="investigation-table">
+
+                            <div class="table-header">
+                                <span>Case ID</span>
+                                <span>Case Name</span>
+                                <span>Status</span>
+                                <span>Last Updated</span>
+                            </div>
+
+
+                            {% for investigation in recent_investigations %}
+                            <div class="table-row">
+                                <span class="case-id">{{ investigation.case_id }}</span>
+                                <span>{{ investigation.case_name }}</span>
+                                <span class="badge {{ investigation.status|lower }}">
+                                    {{ investigation.status }}
+                                </span>
+                                <span>{{ investigation.created_date }}</span>
+                            </div>
+                            {% else %}
+                            <div class="table-row">
+                                <span>No investigations found</span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SYSTEM ACTIVITY -->
+                    <div class="panel activity-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <h3>System Activity</h3>
+                                <span>Recent events</span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="activity-list">
+
+                            {% for activity in recent_activity %}
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fa-solid {{ activity.icon }}"></i>
+                                </div>
+                                <div>
+                                    <strong>{{ activity.action }}</strong>
+                                    <p>{{ activity.details or "-" }}</p>
+                                    <small>{{ activity.timestamp }}</small>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fa-solid fa-clock-rotate-left"></i>
+                                </div>
+                                <div>
+                                    <strong>No activity recorded</strong>
+                                    <p>System activity will appear here</p>
+                                    <small>-</small>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+</html>

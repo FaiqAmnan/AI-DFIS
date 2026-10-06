@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Audit Trail - AI-DFIS</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            margin-bottom: 5px;
+        }
+
+        .page-header p {
+            color: #6b7280;
+        }
+
+        .audit-summary {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            min-width: 180px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .summary-card span {
+            display: block;
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .summary-card strong {
+            font-size: 24px;
+            color: #1f2937;
+        }
+
+        .audit-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            overflow-x: auto;
+        }
+
+        .audit-container h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .audit-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .audit-table th {
+            text-align: left;
+            padding: 13px 12px;
+            background: #f8fafc;
+            color: #374151;
+            font-size: 13px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .audit-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #4b5563;
+            font-size: 13px;
+        }
+
+        .audit-table tr:hover {
+            background: #fafafa;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #eef2ff;
+            color: #4338ca;
+        }
+
+        .action-badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state i {
+            font-size: 35px;
+            margin-bottom: 15px;
+            color: #9ca3af;
+        }
+
+        @media (max-width: 800px) {
+            .audit-summary {
+                flex-direction: column;
+            }
+
+            .summary-card {
+                width: auto;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <div>
+                <h2 class="brand-wordmark">AI-DFIS</h2>
+            </div>
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+            <a href="/dashboard" class="menu-item">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/investigations" class="menu-item">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>Investigations</span>
+            </a>
+
+            <div class="menu-title">
+                ANALYSIS
+            </div>
+
+            <a href="/log-analysis" class="menu-item">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Log Analysis</span>
+            </a>
+
+            <a href="/timeline" class="menu-item">
+                <i class="fa-solid fa-timeline"></i>
+                <span>Timeline</span>
+            </a>
+
+            <a href="/ai-detection" class="menu-item">
+                <i class="fa-solid fa-robot"></i>
+                <span>AI Detection</span>
+            </a>
+
+
+            <div class="menu-title">
+                SYSTEM
+            </div>
+
+            <a href="/analytics" class="menu-item">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Analytics</span>
+            </a>
+
+            <a href="/reports" class="menu-item">
+                <i class="fa-solid fa-file-pdf"></i>
+                <span>Reports</span>
+            </a>
+
+            <a href="/audit-trail" class="menu-item active">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>Audit Trail</span>
+            </a>
+
+            {% if session.get("role") == "Admin" %}
+            <a href="/users" class="menu-item">
+                <i class="fa-solid fa-users"></i>
+                <span>Users</span>
+            </a>
+            {% endif %}
+
+            <a href="/settings" class="menu-item">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="system-status">
+                <span class="status-dot"></span>
+                <span>System Online</span>
+            </div>
+
+            <a href="/logout" class="logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <div class="page-header">
+
+            <h1>Audit Trail</h1>
+
+            <p>
+                System activity and user action records
+            </p>
+
+        </div>
+
+
+        <!-- SUMMARY -->
+        <div class="audit-summary">
+
+            <div class="summary-card">
+
+                <span>Total Activities</span>
+
+                <strong>
+                    {{ logs|length }}
+                </strong>
+
+            </div>
+
+            <div class="summary-card">
+
+                <span>Current User</span>
+
+                <strong style="font-size: 17px;">
+                    {{ session.get("username") }}
+                </strong>
+
+            </div>
+
+            <div class="summary-card">
+
+                <span>Access Level</span>
+
+                <strong style="font-size: 17px;">
+                    {{ session.get("role") }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- AUDIT TABLE -->
+        <div class="audit-container">
+
+            <h2>
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                Activity History
+            </h2>
+
+
+            {% if logs %}
+
+            <table class="audit-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>User</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                        <th>Details</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for log in logs %}
+
+                    <tr>
+
+                        <td>
+                            {{ log["timestamp"] }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ log["username"] }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            <span class="role-badge">
+                                {{ log["role"] }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="action-badge">
+                                {{ log["action"] }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ log["details"] or "-" }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+            <div class="empty-state">
+
+                <i class="fa-solid fa-clock-rotate-left"></i>
+
+                <h3>No Audit Records</h3>
+
+                <p>
+                    No system activities have been recorded yet.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

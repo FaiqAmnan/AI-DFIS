@@ -1,0 +1,968 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI-DFIS | Evidence</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+        }
+
+        .page-header p {
+            margin-top: 6px;
+            color: #6b7280;
+        }
+
+        .add-evidence-btn {
+            background: #2563eb;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .add-evidence-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .evidence-panel {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .panel-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .panel-header p {
+            margin: 5px 0 0;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .evidence-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .evidence-table th {
+            background: #f9fafb;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 13px;
+            color: #374151;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .evidence-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+        }
+
+        .file-icon {
+            color: #2563eb;
+            margin-right: 8px;
+        }
+
+        .status-ready {
+            display: inline-block;
+            background: #dcfce7;
+            color: #166534;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .action-btn {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .analyze-btn {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .analyze-btn:hover {
+            background: #dbeafe;
+        }
+
+        .verify-btn {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .verify-btn:hover {
+            background: #d1fae5;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state i {
+            font-size: 45px;
+            margin-bottom: 15px;
+            color: #9ca3af;
+        }
+
+        .empty-state h3 {
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 800px) {
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .evidence-table {
+                min-width: 700px;
+            }
+
+            .evidence-panel {
+                overflow-x: auto;
+            }
+
+        }
+
+        /* ==============================
+           INTEGRITY RESULT
+           ============================== */
+
+        .integrity-success,
+        .integrity-warning {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px 18px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .integrity-success {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+
+        .integrity-warning {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            color: #9a3412;
+        }
+
+        .delete-success {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            margin-bottom: 18px;
+            border: 1px solid #a7f3d0;
+            border-radius: 7px;
+            background: #ecfdf5;
+            color: #065f46;
+            font-size: 12px;
+        }
+
+        .integrity-success i,
+        .integrity-warning i {
+            font-size: 20px;
+            margin-top: 2px;
+        }
+
+        .integrity-success p,
+        .integrity-warning p {
+            margin: 5px 0 0;
+            font-size: 13px;
+        }
+
+        /* ==============================
+           SHA-256 HASH
+           ============================== */
+
+        .evidence-hash {
+            margin-top: 12px;
+        }
+
+        .evidence-hash span {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+        .evidence-hash code {
+            display: block;
+            word-break: break-all;
+            font-size: 11px;
+            color: #374151;
+            background: #f8fafc;
+            padding: 8px;
+            border-radius: 5px;
+        }
+
+        .evidence-page {
+            min-height: 100vh;
+            padding: 30px 35px;
+            background: #f4f7fb;
+        }
+
+        .evidence-page .page-header {
+            align-items: flex-end;
+        }
+
+        .page-eyebrow {
+            display: block;
+            margin-bottom: 7px;
+            color: #2563eb;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .evidence-page .page-header h1 {
+            color: #172033;
+            font-size: 25px;
+        }
+
+        .evidence-page .page-header p {
+            max-width: 660px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .add-evidence-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            font-size: 13px;
+        }
+
+        .evidence-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .evidence-stat {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            min-width: 0;
+            padding: 16px 18px;
+            background: white;
+            border: 1px solid #e5eaf0;
+            border-radius: 8px;
+        }
+
+        .evidence-stat-icon {
+            display: grid;
+            place-items: center;
+            width: 38px;
+            height: 38px;
+            flex: 0 0 auto;
+            border-radius: 7px;
+            background: #eef4ff;
+            color: #2563eb;
+        }
+
+        .evidence-stat span {
+            display: block;
+            color: #7b8797;
+            font-size: 11px;
+        }
+
+        .evidence-stat strong {
+            display: block;
+            margin-top: 4px;
+            color: #172033;
+            font-size: 20px;
+        }
+
+        .evidence-panel {
+            border-color: #e5eaf0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.035);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 17px 20px;
+        }
+
+        .panel-header h2 {
+            color: #172033;
+            font-size: 15px;
+        }
+
+        .panel-header p {
+            font-size: 11px;
+        }
+
+        .record-count {
+            flex: 0 0 auto;
+            padding: 5px 8px;
+            border-radius: 5px;
+            background: #f1f5f9;
+            color: #526074;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .evidence-table-wrap {
+            overflow-x: auto;
+        }
+
+        .evidence-table {
+            min-width: 900px;
+        }
+
+        .evidence-table th {
+            padding: 11px 16px;
+            color: #7b8797;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.45px;
+            text-transform: uppercase;
+        }
+
+        .evidence-table td {
+            padding: 14px 16px;
+            color: #526074;
+            font-size: 12px;
+            vertical-align: middle;
+        }
+
+        .evidence-table tbody tr:hover {
+            background: #fbfcfe;
+        }
+
+        .file-primary {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            min-width: 190px;
+            color: #344054;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        .file-primary .file-icon {
+            flex: 0 0 auto;
+            margin: 0;
+        }
+
+        .file-secondary,
+        .case-secondary {
+            display: block;
+            margin-top: 5px;
+            color: #8a95a5;
+            font-size: 10px;
+        }
+
+        .case-primary {
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        .hash-cell code {
+            display: block;
+            max-width: 190px;
+            overflow: hidden;
+            color: #526074;
+            font-family: Consolas, monospace;
+            font-size: 10px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .hash-missing {
+            color: #9a6500;
+            font-size: 11px;
+        }
+
+        .status-ready {
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 10px;
+        }
+
+        .row-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 9px;
+            margin: 0;
+            font-size: 10px;
+        }
+
+        .delete-form {
+            display: inline-flex;
+        }
+
+        .delete-btn {
+            border: 1px solid #fecdd3;
+            background: #fff1f2;
+            color: #be123c;
+            font-family: inherit;
+        }
+
+        .delete-btn:hover {
+            background: #ffe4e6;
+        }
+
+        .empty-state {
+            padding: 45px 20px;
+        }
+
+        .empty-state i {
+            display: block;
+            font-size: 27px;
+        }
+
+        .empty-state p {
+            margin-bottom: 18px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 800px) {
+            .evidence-page {
+                padding: 22px 18px;
+            }
+
+            .evidence-stats {
+                grid-template-columns: 1fr;
+                gap: 9px;
+            }
+
+            .evidence-page .page-header {
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .evidence-page {
+                padding: 18px 12px;
+            }
+
+            .evidence-page .page-header h1 {
+                font-size: 21px;
+            }
+
+            .panel-header {
+                align-items: flex-start;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+
+        <div>
+            <h2 class="brand-wordmark">AI-DFIS</h2>
+        </div>
+
+    </div>
+
+
+    <nav class="sidebar-menu">
+
+
+        <!-- MAIN -->
+
+        <a href="/dashboard" class="menu-item">
+
+            <i class="fa-solid fa-chart-line"></i>
+
+            <span>Dashboard</span>
+
+        </a>
+
+
+        <a href="/investigations" class="menu-item">
+
+            <i class="fa-solid fa-folder-open"></i>
+
+            <span>Investigations</span>
+
+        </a>
+
+
+        <!-- ANALYSIS -->
+
+        <div class="menu-title">
+            ANALYSIS
+        </div>
+
+
+        <a href="/log-analysis" class="menu-item">
+
+            <i class="fa-solid fa-file-lines"></i>
+
+            <span>Log Analysis</span>
+
+        </a>
+
+
+        <a href="/timeline" class="menu-item">
+
+            <i class="fa-solid fa-timeline"></i>
+
+            <span>Timeline</span>
+
+        </a>
+
+
+        <a href="/ai-detection" class="menu-item">
+
+            <i class="fa-solid fa-robot"></i>
+
+            <span>AI Detection</span>
+
+        </a>
+
+
+        <!-- SYSTEM -->
+
+        <div class="menu-title">
+            SYSTEM
+        </div>
+
+
+        <a href="/analytics" class="menu-item">
+
+            <i class="fa-solid fa-chart-pie"></i>
+
+            <span>Analytics</span>
+
+        </a>
+
+
+        <a href="/reports" class="menu-item">
+
+            <i class="fa-solid fa-file-pdf"></i>
+
+            <span>Reports</span>
+
+        </a>
+
+
+        <a href="/audit-trail" class="menu-item">
+
+            <i class="fa-solid fa-clock-rotate-left"></i>
+
+            <span>Audit Trail</span>
+
+        </a>
+
+
+        <a href="/users" class="menu-item">
+
+            <i class="fa-solid fa-users"></i>
+
+            <span>Users</span>
+
+        </a>
+
+
+        <a href="/settings" class="menu-item">
+
+            <i class="fa-solid fa-gear"></i>
+
+            <span>Settings</span>
+
+        </a>
+
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+
+        <div class="system-status">
+
+            <span class="status-dot"></span>
+
+            System Online
+
+        </div>
+
+
+        <a href="/logout" class="logout">
+
+            <i class="fa-solid fa-right-from-bracket"></i>
+
+            Logout
+
+        </a>
+
+
+    </div>
+
+</aside>
+
+
+
+<!-- MAIN CONTENT -->
+
+<main class="main-content evidence-page">
+
+
+    <!-- INTEGRITY RESULT -->
+
+    {% if integrity == "verified" %}
+
+    <div class="integrity-success">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <div>
+
+            <strong>Integrity Verified</strong>
+
+            <p>
+                The evidence file "{{ integrity_file }}"
+                has not changed since its original hash was recorded.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% elif integrity == "modified" %}
+
+    <div class="integrity-warning">
+
+        <i class="fa-solid fa-triangle-exclamation"></i>
+
+        <div>
+
+            <strong>Integrity Check Failed</strong>
+
+            <p>
+                The evidence file "{{ integrity_file }}"
+                does not match its original SHA-256 hash.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% elif integrity == "missing" %}
+
+    <div class="integrity-warning">
+
+        <i class="fa-solid fa-file-circle-xmark"></i>
+
+        <div>
+
+            <strong>Evidence File Missing</strong>
+
+            <p>
+                The physical evidence file "{{ integrity_file }}"
+                could not be found.
+            </p>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+
+    {% if deleted %}
+    <div class="delete-success" role="status">
+        <i class="fa-solid fa-circle-check"></i>
+        <span><strong>Evidence deleted.</strong> {{ deleted }} was removed.</span>
+    </div>
+    {% endif %}
+
+    <!-- PAGE HEADER -->
+
+    <div class="page-header">
+
+        <div>
+
+            <span class="page-eyebrow">EVIDENCE REGISTER</span>
+            <h1>Evidence Management</h1>
+
+            <p>
+                {% if selected_investigation %}
+                Evidence for {{ selected_investigation.case_id }}: {{ selected_investigation.case_name }}
+                {% else %}
+                Manage and review digital evidence collected during investigations.
+                {% endif %}
+            </p>
+
+        </div>
+
+
+        <a href="{{ url_for('upload', investigation_id=selected_investigation.id) if selected_investigation else url_for('upload') }}" class="add-evidence-btn">
+
+            <i class="fa-solid fa-plus"></i>
+
+            Add Evidence
+
+        </a>
+
+    </div>
+
+
+
+    <section class="evidence-stats" aria-label="Evidence summary">
+        <div class="evidence-stat">
+            <div class="evidence-stat-icon"><i class="fa-solid fa-folder-open"></i></div>
+            <div><span>Records shown</span><strong>{{ evidence_summary.total }}</strong></div>
+        </div>
+        <div class="evidence-stat">
+            <div class="evidence-stat-icon"><i class="fa-solid fa-link"></i></div>
+            <div><span>Linked to a case</span><strong>{{ evidence_summary.linked }}</strong></div>
+        </div>
+        <div class="evidence-stat">
+            <div class="evidence-stat-icon"><i class="fa-solid fa-fingerprint"></i></div>
+            <div><span>SHA-256 recorded</span><strong>{{ evidence_summary.hashed }}</strong></div>
+        </div>
+    </section>
+
+    <!-- EVIDENCE PANEL -->
+
+    <div class="evidence-panel">
+
+
+        <div class="panel-header">
+            <div>
+                <h2>Digital Evidence</h2>
+                <p>
+                    {% if selected_investigation %}
+                    Evidence associated with {{ selected_investigation.case_id }}.
+                    {% else %}
+                    Evidence files currently stored in the investigation system.
+                    {% endif %}
+                </p>
+            </div>
+            <span class="record-count">{{ evidence_summary.total }} records</span>
+
+        </div>
+
+
+
+        {% if evidence_list %}
+
+
+        <div class="evidence-table-wrap">
+        <table class="evidence-table">
+
+
+            <thead>
+
+                <tr>
+
+                    <th>Evidence File</th>
+                    <th>Investigation</th>
+                    <th>Uploaded</th>
+                    <th>Integrity</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+
+
+            <tbody>
+
+
+                {% for evidence in evidence_list %}
+
+                <tr>
+
+
+                    <td>
+                        <div class="file-primary">
+                            <i class="fa-solid fa-file-lines file-icon"></i>
+                            <span>{{ evidence.filename }}</span>
+                        </div>
+                        <span class="file-secondary">Added by {{ evidence.uploader or "Unknown user" }}</span>
+                    </td>
+
+                    <td>
+                        {% if evidence.case_id %}
+                        <span class="case-primary">{{ evidence.case_id }}</span>
+                        <span class="case-secondary">{{ evidence.case_name }}</span>
+                        {% else %}
+                        <span class="case-secondary">Unassigned</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ evidence.upload_date }}</td>
+
+                    <td class="hash-cell">
+                        {% if evidence.file_hash %}
+                        <code title="{{ evidence.file_hash }}">{{ evidence.file_hash }}</code>
+                        {% else %}
+                        <span class="hash-missing">Hash unavailable</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ evidence.file_type or "FILE" }}</td>
+
+
+
+                    <td>
+                        <span class="status-ready">{{ evidence.status or "Uploaded" }}</span>
+                    </td>
+
+                    <td class="row-actions">
+                        <a href="{{ url_for('log_analysis', file=evidence.filename) }}"
+                           class="action-btn analyze-btn"
+                           aria-label="Analyze {{ evidence.filename }}">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <span>Analyze</span>
+                        </a>
+                        <a href="{{ url_for('verify_integrity', evidence_id=evidence.id) }}"
+                           class="action-btn verify-btn"
+                           aria-label="Verify integrity of {{ evidence.filename }}">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>Verify</span>
+                        </a>
+                        {% if session.get("role") == "Admin" %}
+                        <form class="delete-form"
+                              action="{{ url_for('delete_evidence', evidence_id=evidence.id) }}"
+                              method="POST"
+                              onsubmit="return confirm('Permanently delete this evidence file?')">
+                            <button type="submit"
+                                    class="action-btn delete-btn"
+                                    aria-label="Delete {{ evidence.filename }}">
+                                <i class="fa-solid fa-trash"></i>
+                                <span>Delete</span>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </td>
+
+
+                </tr>
+
+                {% endfor %}
+
+
+            </tbody>
+
+
+        </table>
+        </div>
+
+
+        {% else %}
+
+
+        <!-- EMPTY STATE -->
+
+        <div class="empty-state">
+
+            <i class="fa-solid fa-folder-open"></i>
+
+            <h3>
+                No Evidence Found
+            </h3>
+
+            <p>
+                {% if selected_investigation %}
+                No evidence is linked to this investigation yet.
+                {% else %}
+                Upload digital evidence to begin building the case record.
+                {% endif %}
+            </p>
+
+        </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+
+</main>
+
+
+</body>
+
+</html>
+```

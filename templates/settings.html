@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Settings - AI-DFIS</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <link rel="stylesheet"
+            href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+        }
+
+        /* MAIN CONTENT */
+
+        .main {
+            flex: 1;
+            width: calc(100% - 260px);
+            margin-left: 260px;
+            padding: 35px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #111827;
+        }
+
+        .header p {
+            color: #6b7280;
+            margin-top: 6px;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .settings-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+        }
+
+        .settings-card h2 {
+            font-size: 18px;
+            color: #111827;
+            margin-bottom: 20px;
+        }
+
+        .settings-card h2 i {
+            color: #2563eb;
+            margin-right: 8px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 13px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            color: #6b7280;
+        }
+
+        .value {
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .form-group {
+            margin-bottom: 17px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+            color: #374151;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #2563eb;
+        }
+
+        /* PASSWORD FIELD */
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 42px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: #64748b;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .toggle-password:hover {
+            color: #2563eb;
+        }
+
+        /* BUTTON */
+
+        .save-btn {
+            border: none;
+            background: #2563eb;
+            color: white;
+            padding: 11px 20px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .save-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* STATUS */
+
+        .status {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        @media(max-width: 750px) {
+
+            .main {
+                width: calc(100% - 70px);
+                margin-left: 70px;
+                padding: 20px;
+            }
+
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div>
+                <h2 class="brand-wordmark">AI-DFIS</h2>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a href="/dashboard" class="menu-item">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/investigations" class="menu-item">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>Investigations</span>
+            </a>
+
+            <div class="menu-title">ANALYSIS</div>
+
+            <a href="/log-analysis" class="menu-item">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Log Analysis</span>
+            </a>
+
+            <a href="/timeline" class="menu-item">
+                <i class="fa-solid fa-timeline"></i>
+                <span>Timeline</span>
+            </a>
+
+            <a href="/ai-detection" class="menu-item">
+                <i class="fa-solid fa-robot"></i>
+                <span>AI Detection</span>
+            </a>
+
+            <div class="menu-title">SYSTEM</div>
+
+            <a href="/analytics" class="menu-item">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Analytics</span>
+            </a>
+
+            <a href="/reports" class="menu-item">
+                <i class="fa-solid fa-file-pdf"></i>
+                <span>Reports</span>
+            </a>
+
+            <a href="/audit-trail" class="menu-item">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>Audit Trail</span>
+            </a>
+
+            {% if session.get("role") == "Admin" %}
+            <a href="/users" class="menu-item">
+                <i class="fa-solid fa-users"></i>
+                <span>Users</span>
+            </a>
+            {% endif %}
+
+            <a href="/settings" class="menu-item active">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="system-status">
+                <span class="status-dot"></span>
+                System Online
+            </div>
+            <a href="/logout" class="logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+            </a>
+        </div>
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <div class="main">
+
+        <div class="header">
+
+            <h1>Settings</h1>
+
+            <p>
+                Manage your account and security.
+            </p>
+
+        </div>
+
+
+        <div class="settings-grid">
+
+
+            <!-- ACCOUNT INFORMATION -->
+
+            <div class="settings-card">
+
+                <h2>
+                    <i class="fa-solid fa-user"></i>
+                    Account Information
+                </h2>
+
+                <div class="info-row">
+                    <span class="label">Name</span>
+
+                    <span class="value">
+                        {{ session.get("name") }}
+                    </span>
+                </div>
+
+                <div class="info-row">
+                    <span class="label">Username</span>
+
+                    <span class="value">
+                        {{ session.get("username") }}
+                    </span>
+                </div>
+
+                <div class="info-row">
+                    <span class="label">Role</span>
+
+                    <span class="value">
+                        {{ session.get("role") }}
+                    </span>
+                </div>
+
+                <div class="info-row">
+                    <span class="label">Account Status</span>
+
+                    <span class="status">
+                        Active
+                    </span>
+                </div>
+
+            </div>
+
+
+            <!-- SYSTEM INFORMATION -->
+
+            <div class="settings-card">
+
+                <h2>
+                    <i class="fa-solid fa-server"></i>
+                    System Information
+                </h2>
+
+                <div class="info-row">
+                    <span class="label">System</span>
+
+                    <span class="value">
+                        AI-DFIS
+                    </span>
+                </div>
+
+                <div class="info-row">
+                    <span class="label">Version</span>
+
+                    <span class="value">
+                        1.0
+                    </span>
+                </div>
+
+                <div class="info-row">
+                    <span class="label">Database</span>
+
+                    <span class="value">
+                        SQLite
+                    </span>
+                </div>
+
+                <div class="info-row">
+                    <span class="label">AI Model</span>
+
+                    <span class="value">
+                        Isolation Forest
+                    </span>
+                </div>
+
+            </div>
+
+
+            <!-- SECURITY -->
+
+            <div class="settings-card">
+
+                <h2>
+                    <i class="fa-solid fa-lock"></i>
+                    Security
+                </h2>
+
+
+                {% if password_success %}
+
+                    <p style="color: #15803d; margin-bottom: 15px;">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        {{ password_success }}
+
+                    </p>
+
+                {% endif %}
+
+
+                {% if password_error %}
+
+                    <p style="color: #dc2626; margin-bottom: 15px;">
+
+                        <i class="fa-solid fa-circle-exclamation"></i>
+
+                        {{ password_error }}
+
+                    </p>
+
+                {% endif %}
+
+
+                <form action="/settings/change-password" method="POST">
+
+
+                    <!-- CURRENT PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Current Password
+                        </label>
+
+                        <div class="password-wrapper">
+
+                            <input
+                                type="password"
+                                name="current_password"
+                                id="current-password"
+                                placeholder="Enter current password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="toggle-password"
+                                onclick="togglePassword('current-password', this)"
+                                aria-label="Show current password"
+                            >
+
+                                <i class="fa-solid fa-eye"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- NEW PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label>
+                            New Password
+                        </label>
+
+                        <div class="password-wrapper">
+
+                            <input
+                                type="password"
+                                name="new_password"
+                                id="new-password"
+                                placeholder="Enter new password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="toggle-password"
+                                onclick="togglePassword('new-password', this)"
+                                aria-label="Show new password"
+                            >
+
+                                <i class="fa-solid fa-eye"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CONFIRM PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Confirm Password
+                        </label>
+
+                        <div class="password-wrapper">
+
+                            <input
+                                type="password"
+                                name="confirm_password"
+                                id="confirm-password"
+                                placeholder="Confirm new password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="toggle-password"
+                                onclick="togglePassword('confirm-password', this)"
+                                aria-label="Show confirm password"
+                            >
+
+                                <i class="fa-solid fa-eye"></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <button type="submit" class="save-btn">
+
+                        <i class="fa-solid fa-key"></i>
+
+                        Change Password
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* ==========================================
+       SHOW / HIDE PASSWORD
+       ========================================== */
+
+    function togglePassword(inputId, button) {
+
+        const input = document.getElementById(inputId);
+
+        const icon = button.querySelector("i");
+
+
+        if (input.type === "password") {
+
+            input.type = "text";
+
+            icon.classList.remove("fa-eye");
+
+            icon.classList.add("fa-eye-slash");
+
+            button.setAttribute(
+                "aria-label",
+                "Hide password"
+            );
+
+        } else {
+
+            input.type = "password";
+
+            icon.classList.remove("fa-eye-slash");
+
+            icon.classList.add("fa-eye");
+
+            button.setAttribute(
+                "aria-label",
+                "Show password"
+            );
+
+        }
+
+    }
+
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,815 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>User Management - AI-DFIS</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 260px;
+            height: auto;
+            background: #101827;
+            color: white;
+            padding: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            width: 240px;
+            height: 50px;
+            flex: 0 0 auto;
+            margin: 0 auto;
+            padding: 4px 10px;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            justify-content: center;
+            text-align: center;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: #2563eb;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+        }
+
+        .logo h2 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.16em;
+            line-height: 1;
+        }
+
+        .sidebar .logo > div:last-child {
+            width: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar .logo .brand-wordmark {
+            width: auto;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .sidebar-menu {
+            padding: 20px 12px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-item {
+            text-decoration: none;
+            padding: 12px 14px;
+            margin-bottom: 4px;
+            border-radius: 8px;
+            align-items: center;
+            color: #aeb9c9;
+            display: flex;
+            gap: 13px;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover {
+            background: #1c2738;
+            color: white;
+        }
+
+        .menu-item.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .menu-item i {
+            width: 18px;
+            text-align: center;
+        }
+
+        .menu-title {
+            color: #64748b;
+            font-size: 10px;
+            margin: 0;
+            padding: 22px 14px 8px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-bottom {
+            padding: 15px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .system-status {
+            color: #aeb9c9;
+            font-size: 12px;
+            padding: 10px 8px;
+            margin-bottom: 5px;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #aeb9c9;
+            text-decoration: none;
+            padding: 11px 8px;
+            font-size: 13px;
+        }
+
+        .main {
+            margin-left: 260px;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+        }
+
+        .header p {
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .add-button {
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            padding: 11px 18px;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        .add-button:hover {
+            background: #1d4ed8;
+        }
+
+        .user-dialog {
+            border: none;
+            border-radius: 10px;
+            padding: 0;
+            width: min(440px, calc(100% - 30px));
+            box-shadow: 0 12px 35px rgba(15, 23, 42, 0.2);
+        }
+
+        .user-dialog::backdrop {
+            background: rgba(15, 23, 42, 0.45);
+        }
+
+        .dialog-content {
+            padding: 25px;
+        }
+
+        .dialog-content h2 {
+            margin-bottom: 18px;
+        }
+
+        .dialog-field {
+            display: block;
+            margin-bottom: 14px;
+            color: #374151;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .dialog-field input,
+        .dialog-field select {
+            width: 100%;
+            margin-top: 6px;
+            padding: 10px;
+            border: 1px solid #d4d8df;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .dialog-button {
+            border: none;
+            border-radius: 6px;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+
+        .dialog-submit {
+            background: #2563eb;
+            color: white;
+        }
+
+        .dialog-cancel {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .message {
+            margin-bottom: 18px;
+            padding: 12px 15px;
+            border-radius: 6px;
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 14px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .stat-card h2 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .table-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .table-card h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f3f4f6;
+            padding: 13px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 14px 13px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+        .user-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #dbeafe;
+            color: #2563eb;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+
+        .role {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .admin {
+            background: #ede9fe;
+            color: #7c3aed;
+        }
+
+        .investigator {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .active-status {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .edit {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .delete {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        @media(max-width: 900px) {
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 750px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .sidebar .logo {
+                width: 50px;
+                height: 50px;
+                margin: 0 auto;
+                padding: 4px;
+            }
+
+            .sidebar .logo > div:last-child,
+            .menu-item span,
+            .menu-title,
+            .system-status,
+            .logout {
+                display: none;
+            }
+
+            .main {
+                margin-left: 70px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+
+        <div>
+            <h2 class="brand-wordmark">AI-DFIS</h2>
+        </div>
+
+    </div>
+
+
+    <nav class="sidebar-menu">
+
+        <a href="/dashboard" class="menu-item">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/investigations" class="menu-item">
+            <i class="fa-solid fa-folder-open"></i>
+            <span>Investigations</span>
+        </a>
+
+        <div class="menu-title">ANALYSIS</div>
+
+        <a href="/log-analysis" class="menu-item">
+            <i class="fa-solid fa-file-lines"></i>
+            <span>Log Analysis</span>
+        </a>
+
+        <a href="/timeline" class="menu-item">
+            <i class="fa-solid fa-timeline"></i>
+            <span>Timeline</span>
+        </a>
+
+        <a href="/ai-detection" class="menu-item">
+            <i class="fa-solid fa-robot"></i>
+            <span>AI Detection</span>
+        </a>
+
+
+        <div class="menu-title">SYSTEM</div>
+
+        <a href="/analytics" class="menu-item">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Analytics</span>
+        </a>
+
+        <a href="/reports" class="menu-item">
+            <i class="fa-solid fa-file-pdf"></i>
+            <span>Reports</span>
+        </a>
+
+        <a href="/audit-trail" class="menu-item">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Audit Trail</span>
+        </a>
+
+        {% if session.get("role") == "Admin" %}
+        <a href="/users" class="menu-item active">
+            <i class="fa-solid fa-users"></i>
+            <span>Users</span>
+        </a>
+        {% endif %}
+
+        <a href="/settings" class="menu-item">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+        <div class="system-status">
+            <span class="status-dot"></span>
+            System Online
+        </div>
+
+        <a href="/logout" class="logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+
+    </div>
+
+</aside>
+
+
+<main class="main">
+
+
+    <div class="header">
+
+        <div>
+
+            <h1>User Management</h1>
+
+            <p>
+                Manage system administrators and investigators
+            </p>
+
+        </div>
+
+
+        <a href="#add-user" class="add-button" id="add-user-button">
+
+            <i class="fa-solid fa-user-plus"></i>
+
+            Add User
+
+        </a>
+
+    </div>
+
+    {% if request.args.get("error") %}
+    <div class="message">
+        {{ request.args.get("error") }}
+    </div>
+    {% endif %}
+
+    <dialog class="user-dialog" id="add-user-dialog">
+        <form class="dialog-content" method="POST" action="/users/add">
+            <h2>Add User</h2>
+
+            <label class="dialog-field">
+                Name
+                <input type="text" name="name" required>
+            </label>
+
+            <label class="dialog-field">
+                Username
+                <input type="text" name="username" required>
+            </label>
+
+            <label class="dialog-field">
+                Password
+                <input type="password" name="password" required>
+            </label>
+
+            <label class="dialog-field">
+                Role
+                <select name="role" required>
+                    <option value="Investigator">Investigator</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </label>
+
+            <div class="dialog-actions">
+                <button type="button" class="dialog-button dialog-cancel" data-close-dialog>Cancel</button>
+                <button type="submit" class="dialog-button dialog-submit">Add User</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog class="user-dialog" id="edit-user-dialog">
+        <form class="dialog-content" id="edit-user-form" method="POST">
+            <h2>Edit User</h2>
+
+            <label class="dialog-field">
+                Name
+                <input type="text" name="name" id="edit-name" required>
+            </label>
+
+            <label class="dialog-field">
+                Username
+                <input type="text" name="username" id="edit-username" required>
+            </label>
+
+            <label class="dialog-field">
+                New Password
+                <input type="password" name="password" placeholder="Leave blank to keep current password">
+            </label>
+
+            <label class="dialog-field">
+                Role
+                <select name="role" id="edit-role" required>
+                    <option value="Investigator">Investigator</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </label>
+
+            <div class="dialog-actions">
+                <button type="button" class="dialog-button dialog-cancel" data-close-dialog>Cancel</button>
+                <button type="submit" class="dialog-button dialog-submit">Save Changes</button>
+            </div>
+        </form>
+    </dialog>
+
+
+    <div class="stats">
+
+
+        <div class="stat-card">
+
+            <h2>{{ total_users }}</h2>
+
+            <p>Total Users</p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h2>{{ admin_count }}</h2>
+
+            <p>Administrators</p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h2>{{ investigator_count }}</h2>
+
+            <p>Investigators</p>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="table-card">
+
+        <h2>
+            <i class="fa-solid fa-users"></i>
+            System Users
+        </h2>
+
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>User</th>
+
+                    <th>Username</th>
+
+                    <th>Role</th>
+
+                    <th>Status</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            {% for user in users %}
+
+                <tr>
+
+                    <td>
+
+                        <span class="user-icon">
+
+                            <i class="fa-solid fa-user"></i>
+
+                        </span>
+
+                        {{ user.name }}
+
+                    </td>
+
+
+                    <td>
+                        {{ user.username }}
+                    </td>
+
+
+                    <td>
+
+                        {% if user.role == "Admin" %}
+
+                            <span class="role admin">
+                                Admin
+                            </span>
+
+                        {% else %}
+
+                            <span class="role investigator">
+                                Investigator
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="active-status">
+                            ● Active
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="actions">
+
+                                <button type="button"
+                                    class="action-btn edit edit-user-button"
+                                    data-id="{{ user.id }}"
+                                    data-name="{{ user.name }}"
+                                    data-username="{{ user.username }}"
+                                    data-role="{{ user.role }}"
+                                    aria-label="Edit {{ user.username }}">
+
+                                <i class="fa-solid fa-pen"></i>
+
+                            </button>
+
+
+                            <form method="POST"
+                                  action="/users/{{ user.id }}/delete"
+                                  onsubmit="return confirm('Delete this user?');">
+                                <button type="submit"
+                                        class="action-btn delete"
+                                        aria-label="Delete {{ user.username }}">
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                </button>
+                            </form>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+</main>
+
+<script>
+    const addUserButton = document.getElementById("add-user-button");
+    const addUserDialog = document.getElementById("add-user-dialog");
+    const editUserDialog = document.getElementById("edit-user-dialog");
+    const editUserForm = document.getElementById("edit-user-form");
+
+    addUserButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        addUserDialog.showModal();
+    });
+
+    document.querySelectorAll(".edit-user-button").forEach((button) => {
+        button.addEventListener("click", () => {
+            editUserForm.action = `/users/${button.dataset.id}/edit`;
+            document.getElementById("edit-name").value = button.dataset.name;
+            document.getElementById("edit-username").value = button.dataset.username;
+            document.getElementById("edit-role").value = button.dataset.role;
+            editUserDialog.showModal();
+        });
+    });
+
+    document.querySelectorAll("[data-close-dialog]").forEach((button) => {
+        button.addEventListener("click", () => {
+            button.closest("dialog").close();
+        });
+    });
+</script>
+
+
+</body>
+
+</html>
+```

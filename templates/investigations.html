@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI-DFIS | Investigations</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .search-box {
+            position: relative;
+            z-index: 5;
+        }
+
+        .investigation-suggestions {
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0;
+            width: 100%;
+            max-height: 220px;
+            overflow-y: auto;
+            padding: 4px;
+            background: white;
+            border: 1px solid #dfe5ec;
+            border-radius: 7px;
+            box-shadow: 0 5px 14px rgba(15, 23, 42, 0.12);
+        }
+
+        .investigation-suggestions[hidden] {
+            display: none;
+        }
+
+        .investigation-suggestion {
+            display: block;
+            width: 100%;
+            padding: 8px 10px;
+            border: 0;
+            border-radius: 4px;
+            background: transparent;
+            color: #344054;
+            text-align: left;
+            font: inherit;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .investigation-suggestion:hover,
+        .investigation-suggestion:focus-visible {
+            background: #f1f5f9;
+            outline: none;
+        }
+
+        .case-action-menu {
+            position: relative;
+        }
+
+        .case-action-menu summary {
+            list-style: none;
+            border: none;
+            background: transparent;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .case-action-menu summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .case-action-menu summary:hover,
+        .case-action-menu[open] summary {
+            color: #2563eb;
+        }
+
+        .case-action-options {
+            position: absolute;
+            top: calc(100% + 4px);
+            right: 0;
+            z-index: 20;
+            min-width: 145px;
+            padding: 4px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+        }
+
+        .case-action-options a,
+        .case-action-options button {
+            display: block;
+            width: 100%;
+            padding: 8px 10px;
+            border: 0;
+            border-radius: 4px;
+            background: transparent;
+            color: #344054;
+            text-align: left;
+            text-decoration: none;
+            font: inherit;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .case-action-options a:hover,
+        .case-action-options button:hover {
+            background: #f1f5f9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- SIDEBAR -->
+<aside class="sidebar">
+
+    <div class="logo">
+        <div class="logo-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+
+        <div>
+            <h2 class="brand-wordmark">AI-DFIS</h2>
+        </div>
+    </div>
+
+
+    <nav class="sidebar-menu">
+
+        <!-- MAIN -->
+
+        <a href="/dashboard" class="menu-item ">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+
+
+        <a href="/investigations" class="menu-item active">
+            <i class="fa-solid fa-folder-open"></i>
+            <span>Investigations</span>
+        </a>
+
+
+        <!-- ANALYSIS -->
+
+        <div class="menu-title">
+            ANALYSIS
+        </div>
+
+
+        {% if filename %}
+        <a href="/log-analysis?file={{ filename|urlencode }}" class="menu-item">
+        {% else %}
+        <a href="/log-analysis" class="menu-item">
+        {% endif %}
+            <i class="fa-solid fa-file-lines"></i>
+            <span>Log Analysis</span>
+        </a>
+
+
+        {% if filename %}
+         <a href="/timeline?file={{ filename|urlencode }}" class="menu-item ">
+        {% else %}
+         <a href="/timeline" class="menu-item ">
+        {% endif %}
+                <i class="fa-solid fa-timeline"></i>
+                <span>Timeline</span>
+            </a>
+
+
+        {% if filename %}
+        <a href="/ai-detection?file={{ filename|urlencode }}" class="menu-item ">
+        {% else %}
+        <a href="/ai-detection" class="menu-item ">
+        {% endif %}
+                <i class="fa-solid fa-robot"></i>
+                <span>AI Detection</span>
+            </a>
+
+
+        <!-- SYSTEM -->
+
+        <div class="menu-title">
+            SYSTEM
+        </div>
+
+
+        {% if filename %}
+        <a href="/analytics?file={{ filename|urlencode }}" class="menu-item ">
+        {% else %}
+        <a href="/analytics" class="menu-item ">
+        {% endif %}
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Analytics</span>
+        </a>
+        
+
+
+        {% if filename %}
+        <a href="/reports?file={{ filename|urlencode }}" class="menu-item">
+        {% else %}
+        <a href="/reports" class="menu-item">
+        {% endif %}
+            <i class="fa-solid fa-file-pdf"></i>
+            <span>Reports</span>
+        </a>
+
+        <a href="/audit-trail" class="menu-item">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Audit Trail</span>
+        </a>
+
+        {% if session.get("role") == "Admin" %}
+        <a href="/users" class="menu-item">
+            <i class="fa-solid fa-users"></i>
+            <span>Users</span>
+        </a>
+        {% endif %}
+
+
+        <!-- Not created yet -->
+        <a href="/settings" class="menu-item">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+        </a>
+
+    </nav>
+
+
+    <div class="sidebar-bottom">
+
+        <div class="system-status">
+            <span class="status-dot"></span>
+            System Online
+        </div>
+
+        <a href="/logout" class="logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+
+    </div>
+
+</aside>
+
+
+        <!-- MAIN CONTENT -->
+
+        <main class="main-content">
+
+
+            <!-- TOP BAR -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <h1>Investigations</h1>
+
+                    <p>
+                        Manage digital forensic investigation cases
+                    </p>
+
+                </div>
+
+
+                <div class="user-area">
+
+                    <div class="notification">
+
+                        <i class="fa-regular fa-bell"></i>
+
+                        <span class="notification-dot"></span>
+
+                    </div>
+
+
+                    <div class="user-profile">
+
+                        <div class="avatar">
+
+                            <i class="fa-solid fa-user"></i>
+
+                        </div>
+
+
+                        <div class="user-info">
+
+                            <strong>{{ session.get("name", "User") }}</strong>
+
+                            <span>{{ session.get("role", "User") }}</span>
+
+                        </div>
+
+
+                        <i class="fa-solid fa-chevron-down"></i>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- CONTENT -->
+
+            <section class="investigation-content">
+
+
+                <!-- PAGE HEADER -->
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <span class="section-label">
+                            CASE MANAGEMENT
+                        </span>
+
+                        <h2>
+                            Investigation Cases
+                        </h2>
+
+                        <p>
+                            Create, manage and monitor digital forensic cases.
+                        </p>
+
+                    </div>
+
+
+                    <a href="#new-investigation" class="primary-button">
+
+                        <i class="fa-solid fa-plus"></i>
+
+                        New Investigation
+
+                    </a>
+
+                </div>
+
+
+                <!-- SEARCH AREA -->
+
+                <div class="case-toolbar">
+
+                    <div class="search-box">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        <input type="text"
+                               id="investigation-search"
+                               aria-label="Search investigation cases"
+                               placeholder="Search investigation cases...">
+
+                        <div id="investigation-suggestions"
+                             class="investigation-suggestions"
+                             role="listbox"
+                             aria-label="Matching investigations"
+                             hidden></div>
+
+                    </div>
+
+
+                    <div class="filter-group">
+
+                        <select id="investigation-status-filter" aria-label="Filter investigations by status">
+
+                            <option value="all">All Status</option>
+
+                            <option value="Investigating">Investigating</option>
+
+                            <option value="Analysis">Analysis</option>
+
+                            <option value="Completed">Completed</option>
+
+                            <option value="Archived">Archived</option>
+
+                        </select>
+
+
+                        <select id="investigation-sort-order" aria-label="Sort investigations">
+
+                            <option value="newest">Newest First</option>
+
+                            <option value="oldest">Oldest First</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CASE STATISTICS -->
+
+                <div class="case-stats">
+
+                    <div class="case-stat">
+
+                        <div class="case-stat-icon">
+                            <i class="fa-solid fa-folder"></i>
+                        </div>
+
+                        <div>
+
+                            <span>Total Cases</span>
+
+                            <strong>{{ investigation_list|length }}</strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="case-stat">
+
+                        <div class="case-stat-icon">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+
+                        <div>
+
+                            <span>Investigating</span>
+
+                            <strong>{{ investigation_list|selectattr("status", "equalto", "Investigating")|list|length }}</strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="case-stat">
+
+                        <div class="case-stat-icon">
+                            <i class="fa-solid fa-microscope"></i>
+                        </div>
+
+                        <div>
+
+                            <span>Under Analysis</span>
+
+                            <strong>{{ investigation_list|selectattr("status", "equalto", "Analysis")|list|length }}</strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="case-stat">
+
+                        <div class="case-stat-icon">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+
+                        <div>
+
+                            <span>Completed</span>
+
+                            <strong>{{ investigation_list|selectattr("status", "equalto", "Completed")|list|length }}</strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CASE TABLE -->
+
+                <div class="cases-panel">
+
+                    <div class="cases-header">
+
+                        <div>
+
+                            <h3>All Investigations</h3>
+
+                            <span id="investigation-result-count">
+                                {{ investigation_list|length }} investigation cases found
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="cases-table">
+
+
+                        <!-- TABLE HEADER -->
+
+                        <div class="cases-table-header">
+
+                            <span>CASE ID</span>
+
+                            <span>CASE INFORMATION</span>
+
+                            <span>INVESTIGATOR</span>
+
+                            <span>STATUS</span>
+
+                            <span>LAST UPDATED</span>
+
+                            <span>ACTION</span>
+
+                        </div>
+
+
+                        {% for investigation in investigation_list %}
+                            <div class="case-row"
+                                data-investigation-row
+                                data-status="{{ investigation.status }}"
+                                data-created="{{ investigation.created_date }}">
+
+                            <div class="case-number">
+                                {{ investigation.case_id }}
+                            </div>
+
+                            <div class="case-information">
+                                <strong>{{ investigation.case_name }}</strong>
+                                <span>{{ investigation.description or "No description provided" }}</span>
+                            </div>
+
+                            <div class="investigator-name">
+                                {{ investigation.investigator or "Unassigned" }}
+                            </div>
+
+                            <div>
+                                {% if investigation.status == "Investigating" %}
+                                <span class="case-badge investigating-badge">Investigating</span>
+                                {% elif investigation.status == "Analysis" %}
+                                <span class="case-badge analysis-badge">Analysis</span>
+                                {% else %}
+                                <span class="case-badge completed-badge">{{ investigation.status }}</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="case-date">
+                                {{ investigation.created_date }}
+                            </div>
+
+                            <div class="case-action">
+                                <details class="case-action-menu">
+                                    <summary aria-label="Actions for {{ investigation.case_id }}">
+                                        <i class="fa-solid fa-ellipsis"></i>
+                                    </summary>
+                                    <div class="case-action-options">
+                                        <a href="{{ url_for('evidence', investigation_id=investigation.id) }}">
+                                            View Evidence
+                                        </a>
+                                        <button type="button" data-copy-case-id="{{ investigation.case_id }}">
+                                            Copy Case ID
+                                        </button>
+                                    </div>
+                                </details>
+                            </div>
+
+                        </div>
+                        {% endfor %}
+
+                        <div class="case-row" id="investigation-empty-state"{% if investigation_list %} style="display: none;"{% endif %}>
+                            <div class="case-information">
+                                <strong id="investigation-empty-title">{% if investigation_list %}No matching investigations{% else %}No investigations found{% endif %}</strong>
+                                <span id="investigation-empty-message">{% if investigation_list %}Try a different search term.{% else %}Create a new investigation to get started.{% endif %}</span>
+                            </div>
+                        </div>
+
+                        {% if false %}
+
+                        <!-- CASE 1 -->
+
+                        <div class="case-row">
+
+                            <div class="case-number">
+                                INV-2026-024
+                            </div>
+
+
+                            <div class="case-information">
+
+                                <strong>
+                                    Unauthorized System Access
+                                </strong>
+
+                                <span>
+                                    Suspicious login activity
+                                </span>
+
+                            </div>
+
+
+                            <div class="investigator-name">
+                                Investigator
+                            </div>
+
+
+                            <div>
+
+                                <span class="case-badge investigating-badge">
+                                    Investigating
+                                </span>
+
+                            </div>
+
+
+                            <div class="case-date">
+                                Today, 10:24 AM
+                            </div>
+
+
+                            <div class="case-action">
+
+                                <button>
+                                    <i class="fa-solid fa-ellipsis"></i>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CASE 2 -->
+
+                        <div class="case-row">
+
+                            <div class="case-number">
+                                INV-2026-023
+                            </div>
+
+
+                            <div class="case-information">
+
+                                <strong>
+                                    Suspicious Network Activity
+                                </strong>
+
+                                <span>
+                                    Abnormal network connections
+                                </span>
+
+                            </div>
+
+
+                            <div class="investigator-name">
+                                Investigator
+                            </div>
+
+
+                            <div>
+
+                                <span class="case-badge analysis-badge">
+                                    Analysis
+                                </span>
+
+                            </div>
+
+
+                            <div class="case-date">
+                                Yesterday
+                            </div>
+
+
+                            <div class="case-action">
+
+                                <button>
+                                    <i class="fa-solid fa-ellipsis"></i>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CASE 3 -->
+
+                        <div class="case-row">
+
+                            <div class="case-number">
+                                INV-2026-022
+                            </div>
+
+
+                            <div class="case-information">
+
+                                <strong>
+                                    Data Exfiltration Investigation
+                                </strong>
+
+                                <span>
+                                    Possible unauthorized data transfer
+                                </span>
+
+                            </div>
+
+
+                            <div class="investigator-name">
+                                Investigator
+                            </div>
+
+
+                            <div>
+
+                                <span class="case-badge completed-badge">
+                                    Completed
+                                </span>
+
+                            </div>
+
+
+                            <div class="case-date">
+                                2 days ago
+                            </div>
+
+
+                            <div class="case-action">
+
+                                <button>
+                                    <i class="fa-solid fa-ellipsis"></i>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CASE 4 -->
+
+                        <div class="case-row">
+
+                            <div class="case-number">
+                                INV-2026-021
+                            </div>
+
+
+                            <div class="case-information">
+
+                                <strong>
+                                    Compromised User Account
+                                </strong>
+
+                                <span>
+                                    Abnormal account behavior
+                                </span>
+
+                            </div>
+
+
+                            <div class="investigator-name">
+                                Investigator
+                            </div>
+
+
+                            <div>
+
+                                <span class="case-badge investigating-badge">
+                                    Investigating
+                                </span>
+
+                            </div>
+
+
+                            <div class="case-date">
+                                3 days ago
+                            </div>
+
+
+                            <div class="case-action">
+
+                                <button>
+                                    <i class="fa-solid fa-ellipsis"></i>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CASE 5 -->
+
+                        <div class="case-row">
+
+                            <div class="case-number">
+                                INV-2026-020
+                            </div>
+
+
+                            <div class="case-information">
+
+                                <strong>
+                                    Malware Activity Investigation
+                                </strong>
+
+                                <span>
+                                    Suspicious executable detected
+                                </span>
+
+                            </div>
+
+
+                            <div class="investigator-name">
+                                Investigator
+                            </div>
+
+
+                            <div>
+
+                                <span class="case-badge completed-badge">
+                                    Completed
+                                </span>
+
+                            </div>
+
+
+                            <div class="case-date">
+                                5 days ago
+                            </div>
+
+
+                            <div class="case-action">
+
+                                <button>
+                                    <i class="fa-solid fa-ellipsis"></i>
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- NEW INVESTIGATION POPUP -->
+
+<div id="new-investigation" class="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>Create New Investigation</h2>
+                <p>Create a new digital forensic investigation case.</p>
+            </div>
+
+            <a href="#" class="close-button">
+                &times;
+            </a>
+
+        </div>
+
+        <form action="/investigations/add" method="POST">
+
+            <div class="form-group">
+
+                <label>Case Name</label>
+
+                <input
+                    type="text"
+                    name="case_name"
+                    placeholder="e.g. Unauthorized System Access"
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Description</label>
+
+                <textarea
+                    name="description"
+                    rows="5"
+                    placeholder="Enter investigation description..."></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Status</label>
+
+                <select name="status">
+
+                    <option value="Investigating">
+                        Investigating
+                    </option>
+
+                    <option value="Analysis">
+                        Analysis
+                    </option>
+
+                    <option value="Completed">
+                        Completed
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a href="#" class="cancel-button">
+                    Cancel
+                </a>
+
+                <button type="submit" class="save-button">
+                    <i class="fa-solid fa-folder-plus"></i>
+                    Create Investigation
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+    const investigationSearch = document.getElementById("investigation-search");
+    const statusFilter = document.getElementById("investigation-status-filter");
+    const sortOrder = document.getElementById("investigation-sort-order");
+    const investigationRows = Array.from(
+        document.querySelectorAll("[data-investigation-row]")
+    );
+    const resultCount = document.getElementById("investigation-result-count");
+    const emptyState = document.getElementById("investigation-empty-state");
+    const emptyTitle = document.getElementById("investigation-empty-title");
+    const emptyMessage = document.getElementById("investigation-empty-message");
+    const suggestionList = document.getElementById("investigation-suggestions");
+    const totalInvestigations = investigationRows.length;
+    const casesContainer = investigationRows[0]?.parentElement;
+
+    function updateInvestigationSuggestions(query) {
+        suggestionList.replaceChildren();
+
+        if (!query) {
+            suggestionList.hidden = true;
+            return;
+        }
+
+        const selectedStatus = statusFilter.value;
+        const matchingRows = investigationRows.filter(function (row) {
+            const matchesQuery = row.textContent.toLocaleLowerCase().includes(query);
+            const matchesStatus = selectedStatus === "all" || row.dataset.status === selectedStatus;
+            return matchesQuery && matchesStatus;
+        }).slice(0, 5);
+
+        matchingRows.forEach(function (row) {
+            const suggestion = document.createElement("button");
+            const caseId = row.querySelector(".case-number").textContent.trim();
+            const caseName = row.querySelector(".case-information strong").textContent.trim();
+
+            suggestion.type = "button";
+            suggestion.className = "investigation-suggestion";
+            suggestion.setAttribute("role", "option");
+            suggestion.textContent = `${caseId} - ${caseName}`;
+            suggestion.addEventListener("mousedown", function (event) {
+                event.preventDefault();
+                investigationSearch.value = caseId;
+                investigationSearch.dispatchEvent(new Event("input", { bubbles: true }));
+                suggestionList.hidden = true;
+            });
+
+            suggestionList.appendChild(suggestion);
+        });
+
+        suggestionList.hidden = matchingRows.length === 0;
+    }
+
+    function updateInvestigationList() {
+        const query = investigationSearch.value.trim().toLocaleLowerCase();
+        const selectedStatus = statusFilter.value;
+        let visibleCount = 0;
+
+        updateInvestigationSuggestions(query);
+
+        investigationRows.sort(function (firstRow, secondRow) {
+            const firstDate = firstRow.dataset.created;
+            const secondDate = secondRow.dataset.created;
+            const comparison = firstDate.localeCompare(secondDate);
+            return sortOrder.value === "oldest" ? comparison : -comparison;
+        });
+
+        investigationRows.forEach(function (row) {
+            const matchesQuery = row.textContent.toLocaleLowerCase().includes(query);
+            const matchesStatus = selectedStatus === "all" || row.dataset.status === selectedStatus;
+            const matches = matchesQuery && matchesStatus;
+            row.style.display = matches ? "" : "none";
+            visibleCount += matches ? 1 : 0;
+            casesContainer.appendChild(row);
+        });
+
+        resultCount.textContent = `${visibleCount} investigation ${visibleCount === 1 ? "case" : "cases"} found`;
+        emptyState.style.display = visibleCount === 0 ? "" : "none";
+
+        if (totalInvestigations === 0 && query === "") {
+            emptyTitle.textContent = "No investigations found";
+            emptyMessage.textContent = "Create a new investigation to get started.";
+        } else {
+            emptyTitle.textContent = "No matching investigations";
+            emptyMessage.textContent = query
+                ? "Try a different search term or status."
+                : "No cases match the selected status.";
+        }
+    }
+
+    investigationSearch.addEventListener("input", updateInvestigationList);
+    statusFilter.addEventListener("change", updateInvestigationList);
+    sortOrder.addEventListener("change", updateInvestigationList);
+
+    updateInvestigationList();
+
+    document.addEventListener("click", function (event) {
+        if (!event.target.closest(".search-box")) {
+            suggestionList.hidden = true;
+        }
+    });
+
+    document.querySelectorAll("[data-copy-case-id]").forEach(function (button) {
+        button.addEventListener("click", async function () {
+            const originalText = "Copy Case ID";
+
+            try {
+                await navigator.clipboard.writeText(button.dataset.copyCaseId);
+                button.textContent = "Copied";
+            } catch {
+                button.textContent = "Copy failed";
+            }
+
+            window.setTimeout(function () {
+                button.textContent = originalText;
+            }, 1500);
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI-DFIS | Log Analysis</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            width: 250px;
+            background: #111827;
+            color: white;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 24px 20px;
+            border-bottom: 1px solid #273244;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: #2563eb;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .logo span {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .sidebar-menu {
+            padding: 20px 12px;
+            flex: 1;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #cbd5e1;
+            text-decoration: none;
+            padding: 12px 14px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover {
+            background: #1f2937;
+            color: white;
+        }
+
+        .menu-item.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-title {
+            font-size: 10px;
+            color: #6b7280;
+            font-weight: bold;
+            margin: 22px 14px 8px;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-bottom {
+            padding: 15px;
+            border-top: 1px solid #273244;
+        }
+
+        .system-status {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 15px;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            margin-right: 7px;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #cbd5e1;
+            text-decoration: none;
+            padding: 10px;
+            font-size: 13px;
+        }
+
+        .logout:hover {
+            color: white;
+        }
+
+        /* ================= MAIN ================= */
+
+        .main-content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 30px;
+        }
+
+        /* ================= HEADER ================= */
+
+        .analysis-header {
+            background: white;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .analysis-header-left {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .analysis-file-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 12px;
+            background: #eff6ff;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+        }
+
+        .analysis-header h1 {
+            margin: 0 0 5px;
+            font-size: 24px;
+        }
+
+        .analysis-header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .analysis-status-badge {
+            background: #ecfdf5;
+            color: #059669;
+            padding: 9px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* ================= CASE INFORMATION ================= */
+
+        .section-title {
+            font-size: 17px;
+            margin: 0 0 14px;
+            font-weight: 700;
+        }
+
+        .case-information {
+            margin-bottom: 24px;
+        }
+
+        .case-info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .case-info-card {
+            background: white;
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .case-info-label {
+            color: #6b7280;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-bottom: 7px;
+        }
+
+        .case-info-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* ================= EVIDENCE ================= */
+
+        .evidence-content {
+            background: white;
+            border-radius: 14px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .evidence-content-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .evidence-content-header h2 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .evidence-content-header span {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .evidence-viewer {
+            background: #111827;
+            color: #d1d5db;
+            margin: 20px;
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
+        .empty-evidence {
+            color: #9ca3af;
+            text-align: center;
+            padding: 30px;
+        }
+
+        /* ================= STATISTICS ================= */
+
+        .analysis-statistics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 24px;
+        }
+
+        .analysis-stat {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .analysis-stat-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .stat-warning {
+            background: #fff7ed;
+            color: #ea580c;
+        }
+
+        .stat-danger {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .stat-success {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .analysis-stat h3 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .analysis-stat p {
+            margin: 4px 0 0;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        /* ================= FILTER ================= */
+
+        .analysis-filter {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .analysis-filter-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .analysis-filter-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 12px;
+        }
+
+        .analysis-filter input,
+        .analysis-filter select {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            outline: none;
+            background: white;
+        }
+
+        .analysis-filter input:focus,
+        .analysis-filter select:focus {
+            border-color: #2563eb;
+        }
+
+        .search-btn {
+            border: none;
+            background: #2563eb;
+            color: white;
+            padding: 11px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .search-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* ================= EVENTS ================= */
+
+        .events-panel {
+            background: white;
+            border-radius: 14px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .events-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .events-header h2 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .events-count {
+            background: #eff6ff;
+            color: #2563eb;
+            padding: 6px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .events-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .events-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        .events-table th {
+            background: #f9fafb;
+            text-align: left;
+            padding: 13px 15px;
+            font-size: 11px;
+            color: #6b7280;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .events-table td {
+            padding: 14px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .events-table tr:hover {
+            background: #f9fafb;
+        }
+
+        .event-time {
+            font-family: Consolas, monospace;
+            font-size: 12px;
+            color: #4b5563;
+        }
+
+        .event-name {
+            font-weight: 600;
+        }
+
+        .username {
+            color: #6b7280;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .risk-critical {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .risk-high {
+            background: #ffedd5;
+            color: #c2410c;
+        }
+
+        .risk-medium {
+            background: #fef3c7;
+            color: #a16207;
+        }
+
+        .risk-low {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .event-status {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .event-suspicious {
+            color: #dc2626;
+        }
+
+        .event-normal {
+            color: #16a34a;
+        }
+
+        .no-events {
+            padding: 45px;
+            text-align: center;
+            color: #9ca3af;
+        }
+
+        .no-events i {
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+
+        /* ================= SUMMARY ================= */
+
+        .analysis-summary {
+            background: white;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .summary-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .summary-card i {
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+
+        .summary-card h4 {
+            margin: 0 0 5px;
+            font-size: 13px;
+        }
+
+        .summary-card p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 1100px) {
+
+            .case-info-grid,
+            .analysis-statistics,
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .analysis-filter-row {
+                grid-template-columns: 1fr 1fr;
+            }
+
+        }
+
+        @media (max-width: 750px) {
+
+            .sidebar {
+                width: 210px;
+            }
+
+            .main-content {
+                margin-left: 210px;
+                width: calc(100% - 210px);
+                padding: 20px;
+            }
+
+            .analysis-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .case-info-grid,
+            .analysis-statistics,
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .analysis-filter-row {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        .sidebar {
+            width: 260px;
+            background: #101827;
+        }
+
+        .logo {
+            padding: 25px 22px;
+            border-bottom-color: rgba(255,255,255,0.08);
+        }
+
+        .logo-icon {
+            font-size: 19px;
+        }
+
+        .logo .brand-wordmark {
+            font-size: 24px;
+            letter-spacing: 0.2em;
+            line-height: 1;
+        }
+
+        .menu-item {
+            gap: 13px;
+            margin-bottom: 4px;
+            color: #aeb9c9;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover {
+            background: #1c2738;
+        }
+
+        .menu-item i {
+            width: 18px;
+        }
+
+        .menu-title {
+            padding: 22px 14px 8px;
+            margin: 0;
+            color: #64748b;
+        }
+
+        .sidebar-bottom {
+            padding: 15px;
+            border-top-color: rgba(255,255,255,0.08);
+        }
+
+        .main-content {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .logo > div:last-child,
+            .menu-item span,
+            .menu-title,
+            .system-status,
+            .logout {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div class="dashboard-container">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <div>
+                <h2 class="brand-wordmark">AI-DFIS</h2>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+            <a href="/dashboard" class="menu-item">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/investigations" class="menu-item">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>Investigations</span>
+            </a>
+
+            <div class="menu-title">
+                ANALYSIS
+            </div>
+
+
+            <a href="/log-analysis" class="menu-item active">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Log Analysis</span>
+            </a>
+
+           {% if filename %}
+<a href="/timeline?file={{ filename }}" class="menu-item">
+{% else %}
+<a href="/timeline" class="menu-item">
+{% endif %}
+
+    <i class="fa-solid fa-timeline"></i>
+    <span>Timeline</span>
+
+</a>
+
+            {% if filename %}
+<a href="/ai-detection?file={{ filename }}" class="menu-item">
+{% else %}
+<a href="/ai-detection" class="menu-item">
+{% endif %}
+
+    <i class="fa-solid fa-robot"></i>
+    <span>AI Detection</span>
+
+</a>
+
+
+            <div class="menu-title">
+                SYSTEM
+            </div>
+
+
+            {% if filename %}
+            <a href="/analytics?file={{ filename }}" class="menu-item">
+            {% else %}
+            <a href="/analytics" class="menu-item">
+            {% endif %}
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Analytics</span>
+            </a>
+
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-file-pdf"></i>
+                <span>Reports</span>
+            </a>
+
+            {% if session.get("role") == "Admin" %}
+            <a href="/users" class="menu-item">
+                <i class="fa-solid fa-users"></i>
+                <span>Users</span>
+            </a>
+            {% endif %}
+
+            <a href="/settings" class="menu-item">
+                <i class="fa-solid fa-gear"></i>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="system-status">
+                <span class="status-dot"></span>
+                System Online
+            </div>
+
+            <a href="/logout" class="logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+
+        <!-- HEADER -->
+
+        <div class="analysis-header">
+
+            <div class="analysis-header-left">
+
+                <div class="analysis-file-icon">
+                    <i class="fa-solid fa-file-shield"></i>
+                </div>
+
+                <div>
+
+                    <h1>Digital Evidence Analysis</h1>
+
+                    {% if filename %}
+
+                    <p>
+                        Analyzing evidence file:
+                        <strong>{{ filename }}</strong>
+                    </p>
+
+                    {% else %}
+
+                    <p>
+                        No evidence file selected
+                    </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <div class="analysis-status-badge">
+
+                <i class="fa-solid fa-circle-check"></i>
+                Analysis Complete
+
+            </div>
+
+        </div>
+
+
+
+        <!-- CASE INFORMATION -->
+
+        <section class="case-information">
+
+            <h2 class="section-title">
+                Case Information
+            </h2>
+
+
+            <div class="case-info-grid">
+
+                <div class="case-info-card">
+
+                    <div class="case-info-label">
+                        Case ID
+                    </div>
+
+                    <div class="case-info-value">
+                        INV-2026-024
+                    </div>
+
+                </div>
+
+
+                <div class="case-info-card">
+
+                    <div class="case-info-label">
+                        Investigation
+                    </div>
+
+                    <div class="case-info-value">
+                        Unauthorized System Access
+                    </div>
+
+                </div>
+
+
+                <div class="case-info-card">
+
+                    <div class="case-info-label">
+                        Investigator
+                    </div>
+
+                    <div class="case-info-value">
+                        Forensic Analyst
+                    </div>
+
+                </div>
+
+
+                <div class="case-info-card">
+
+                    <div class="case-info-label">
+                        Analysis Engine
+                    </div>
+
+                    <div class="case-info-value">
+                        AI-DFIS
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- RAW EVIDENCE -->
+
+        <section class="evidence-content">
+
+            <div class="evidence-content-header">
+
+                <h2>
+                    <i class="fa-solid fa-terminal"></i>
+                    Raw Evidence
+                </h2>
+
+                {% if filename %}
+
+                <span>
+                    {{ filename }}
+                </span>
+
+                {% endif %}
+
+            </div>
+
+
+            {% if log_content %}
+
+            <div class="evidence-viewer">{{ log_content }}</div>
+
+            {% else %}
+
+            <div class="empty-evidence">
+
+                <i class="fa-solid fa-file-circle-xmark"></i>
+
+                <p>
+                    No log content available.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+
+
+        <!-- STATISTICS -->
+
+        <div class="analysis-statistics">
+
+
+            <div class="analysis-stat">
+
+                <div class="analysis-stat-icon">
+
+                    <i class="fa-solid fa-list"></i>
+
+                </div>
+
+                <div>
+
+                    <h3>
+                        {{ total_events }}
+                    </h3>
+
+                    <p>
+                        Total Events
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="analysis-stat">
+
+                <div class="analysis-stat-icon stat-success">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                </div>
+
+                <div>
+
+                    <h3>
+                        {{ normal_events }}
+                    </h3>
+
+                    <p>
+                        Normal Events
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="analysis-stat">
+
+                <div class="analysis-stat-icon stat-warning">
+
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                </div>
+
+                <div>
+
+                    <h3>
+                        {{ suspicious_events }}
+                    </h3>
+
+                    <p>
+                        Suspicious Events
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="analysis-stat">
+
+                <div class="analysis-stat-icon stat-danger">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                </div>
+
+                <div>
+
+                    <h3>
+                        {{ high_risk_events }}
+                    </h3>
+
+                    <p>
+                        High Risk Events
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- FILTER -->
+
+        <section class="analysis-filter">
+
+            <div class="analysis-filter-title">
+
+                <i class="fa-solid fa-filter"></i>
+                Event Filters
+
+            </div>
+
+
+            <div class="analysis-filter-row">
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search event message..."
+                >
+
+
+                <select id="severityFilter">
+
+                    <option value="all">
+                        All Severity
+                    </option>
+
+                    <option value="Critical">
+                        Critical
+                    </option>
+
+                    <option value="High">
+                        High
+                    </option>
+
+                    <option value="Medium">
+                        Medium
+                    </option>
+
+                    <option value="Low">
+                        Low
+                    </option>
+
+                </select>
+
+
+                <select id="typeFilter">
+
+                    <option value="all">
+                        All Event Types
+                    </option>
+
+                    <option value="INFO">
+                        INFO
+                    </option>
+
+                    <option value="WARNING">
+                        WARNING
+                    </option>
+
+                    <option value="ERROR">
+                        ERROR
+                    </option>
+
+                </select>
+
+
+                <button class="search-btn" onclick="filterEvents()">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Search
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- EVENTS -->
+
+        <section class="events-panel">
+
+            <div class="events-header">
+
+                <h2>
+
+                    <i class="fa-solid fa-list-check"></i>
+                    Detected Events
+
+                </h2>
+
+
+                <span class="events-count">
+
+                    {{ total_events }} Events
+
+                </span>
+
+            </div>
+
+
+            <div class="events-table-wrapper">
+
+                <table class="events-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Date</th>
+
+                            <th>Time</th>
+
+                            <th>Event</th>
+
+                            <th>User</th>
+
+                            <th>Severity</th>
+
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="eventsTableBody">
+
+
+                        {% if events %}
+
+
+                            {% for event in events %}
+
+                            <tr class="event-row"
+                                data-severity="{{ event.severity }}"
+                                data-level="{{ event.level }}"
+                                data-message="{{ event.message|lower }}">
+
+
+                                <td class="event-time">
+
+                                    {{ event.date }}
+
+                                </td>
+
+
+                                <td class="event-time">
+
+                                    {{ event.time }}
+
+                                </td>
+
+
+                                <td class="event-name">
+
+                                    {{ event.message }}
+
+                                </td>
+
+
+                                <td class="username">
+
+                                    {{ event.username }}
+
+                                </td>
+
+
+                                <td>
+
+                                    {% if event.severity == "Critical" %}
+
+                                    <span class="risk-badge risk-critical">
+                                        Critical
+                                    </span>
+
+                                    {% elif event.severity == "High" %}
+
+                                    <span class="risk-badge risk-high">
+                                        High
+                                    </span>
+
+                                    {% elif event.severity == "Medium" %}
+
+                                    <span class="risk-badge risk-medium">
+                                        Medium
+                                    </span>
+
+                                    {% else %}
+
+                                    <span class="risk-badge risk-low">
+                                        Low
+                                    </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+
+                                    {% if event.level == "WARNING" or event.level == "ERROR" %}
+
+                                    <span class="event-status event-suspicious">
+
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                        Suspicious
+
+                                    </span>
+
+                                    {% else %}
+
+                                    <span class="event-status event-normal">
+
+                                        <i class="fa-solid fa-circle-check"></i>
+                                        Normal
+
+                                    </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                            </tr>
+
+                            {% endfor %}
+
+
+                        {% else %}
+
+
+                            <tr>
+
+                                <td colspan="6">
+
+                                    <div class="no-events">
+
+                                        <i class="fa-solid fa-file-circle-xmark"></i>
+
+                                        <p>
+                                            No events detected.
+                                        </p>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                        {% endif %}
+
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- SUMMARY -->
+
+        <section class="analysis-summary">
+
+            <h2 class="section-title">
+                Analysis Summary
+            </h2>
+
+
+            <div class="summary-grid">
+
+
+                <div class="summary-card">
+
+                    <i class="fa-solid fa-file-circle-check"></i>
+
+                    <h4>
+                        Evidence Processed
+                    </h4>
+
+                    <p>
+
+                        {% if filename %}
+                            {{ filename }}
+                        {% else %}
+                            No file selected
+                        {% endif %}
+
+                    </p>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <i class="fa-solid fa-list-check"></i>
+
+                    <h4>
+                        Events Identified
+                    </h4>
+
+                    <p>
+                        {{ total_events }} events found
+                    </p>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                    <h4>
+                        Suspicious Activity
+                    </h4>
+
+                    <p>
+                        {{ suspicious_events }} suspicious events detected
+                    </p>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <i class="fa-solid fa-timeline"></i>
+
+                    <h4>
+                        Next Stage
+                    </h4>
+
+                    <p>
+                        Timeline Reconstruction
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+function filterEvents() {
+
+    const searchText =
+        document.getElementById("searchInput").value.toLowerCase();
+
+    const severity =
+        document.getElementById("severityFilter").value;
+
+    const type =
+        document.getElementById("typeFilter").value;
+
+
+    const rows =
+        document.querySelectorAll(".event-row");
+
+
+    rows.forEach(function(row) {
+
+        const message =
+            row.getAttribute("data-message");
+
+        const rowSeverity =
+            row.getAttribute("data-severity");
+
+        const rowLevel =
+            row.getAttribute("data-level");
+
+
+        const searchMatch =
+            message.includes(searchText);
+
+
+        const severityMatch =
+            severity === "all" ||
+            rowSeverity === severity;
+
+
+        const typeMatch =
+            type === "all" ||
+            rowLevel === type;
+
+
+        if (
+            searchMatch &&
+            severityMatch &&
+            typeMatch
+        ) {
+
+            row.style.display = "";
+
+        } else {
+
+            row.style.display = "none";
+
+        }
+
+    });
+
+}
+
+
+/* Search when pressing Enter */
+
+document.getElementById("searchInput").addEventListener(
+    "keyup",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            filterEvents();
+
+        }
+
+    }
+);
+
+
+/* Automatically filter when dropdown changes */
+
+document.getElementById("severityFilter").addEventListener(
+    "change",
+    filterEvents
+);
+
+
+document.getElementById("typeFilter").addEventListener(
+    "change",
+    filterEvents
+);
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI-DFIS | AI Detection</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            width: 250px;
+            background: #111827;
+            color: white;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 24px 20px;
+            border-bottom: 1px solid #273244;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: #2563eb;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .logo span {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .sidebar-menu {
+            padding: 20px 12px;
+            flex: 1;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #cbd5e1;
+            text-decoration: none;
+            padding: 12px 14px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background: #1f2937;
+            color: white;
+        }
+
+        .menu-item.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-title {
+            font-size: 10px;
+            color: #6b7280;
+            font-weight: bold;
+            margin: 22px 14px 8px;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-bottom {
+            padding: 15px;
+            border-top: 1px solid #273244;
+        }
+
+        .system-status {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 15px;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            margin-right: 7px;
+        }
+
+        .logout {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #cbd5e1;
+            text-decoration: none;
+            padding: 10px;
+            font-size: 13px;
+        }
+
+        /* ================= MAIN ================= */
+
+        .main-content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 30px;
+        }
+
+        /* ================= HEADER ================= */
+
+        .page-header {
+            background: white;
+            padding: 24px;
+            border-radius: 14px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .page-header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .page-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 12px;
+            background: #eef2ff;
+            color: #4f46e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+        }
+
+        .page-header h1 {
+            margin: 0 0 5px;
+            font-size: 24px;
+        }
+
+        .page-header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .ai-status {
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 9px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* ================= CASE INFORMATION ================= */
+
+        .section-title {
+            margin: 0 0 14px;
+            font-size: 17px;
+        }
+
+        .case-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 24px;
+        }
+
+        .case-card {
+            background: white;
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .case-label {
+            color: #6b7280;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-bottom: 7px;
+        }
+
+        .case-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* ================= AI OVERVIEW ================= */
+
+        .ai-overview {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 24px;
+        }
+
+        .overview-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .overview-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .overview-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            background: #eef2ff;
+            color: #4f46e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .overview-icon.danger {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .overview-icon.success {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .overview-card h2 {
+            margin: 15px 0 3px;
+            font-size: 25px;
+        }
+
+        .overview-card p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        /* ================= AI MODEL ================= */
+
+        .model-panel {
+            background: white;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .model-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .model-header h2 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .model-badge {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 7px 11px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .model-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .model-info-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .model-info-card h4 {
+            margin: 0 0 6px;
+            font-size: 13px;
+        }
+
+        .model-info-card p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        /* ================= RESULTS ================= */
+
+        .results-panel {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .results-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .results-header h2 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .results-count {
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 6px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        .results-table th {
+            background: #f9fafb;
+            text-align: left;
+            padding: 13px 15px;
+            font-size: 11px;
+            color: #6b7280;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .results-table td {
+            padding: 14px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .results-table tr:hover {
+            background: #f9fafb;
+        }
+
+        .event-time {
+            font-family: Consolas, monospace;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .event-message {
+            font-weight: 600;
+        }
+
+        .user-name {
+            color: #6b7280;
+        }
+
+        .ai-badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .ai-anomaly {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .ai-normal {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .risk-high {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .risk-low {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        /* ================= EXPLANATION ================= */
+
+        .explanation-panel {
+            background: white;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .explanation-panel h2 {
+            margin: 0 0 8px;
+            font-size: 17px;
+        }
+
+        .explanation-panel p {
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .next-stage {
+            margin-top: 18px;
+            padding: 14px;
+            border-radius: 10px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 12px;
+        }
+
+        /* ================= EMPTY ================= */
+
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #9ca3af;
+        }
+
+        .empty-state i {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 1050px) {
+
+            .case-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .ai-overview,
+            .model-info {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 750px) {
+
+            .sidebar {
+                width: 210px;
+            }
+
+            .main-content {
+                margin-left: 210px;
+                width: calc(100% - 210px);
+                padding: 20px;
+            }
+
+            .case-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+        }
+
+        .sidebar {
+            width: 260px;
+            background: #101827;
+            z-index: 100;
+        }
+
+        .logo {
+            padding: 25px 22px;
+            border-bottom-color: rgba(255,255,255,0.08);
+        }
+
+        .logo-icon {
+            font-size: 19px;
+        }
+
+        .logo .brand-wordmark {
+            font-size: 24px;
+            letter-spacing: 0.2em;
+            line-height: 1;
+        }
+
+        .menu-item {
+            gap: 13px;
+            margin-bottom: 4px;
+            color: #aeb9c9;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover {
+            background: #1c2738;
+        }
+
+        .menu-item i {
+            width: 18px;
+        }
+
+        .menu-title {
+            padding: 22px 14px 8px;
+            margin: 0;
+            color: #64748b;
+        }
+
+        .sidebar-bottom {
+            padding: 15px;
+            border-top-color: rgba(255,255,255,0.08);
+        }
+
+        .main-content {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .logo > div:last-child,
+            .menu-item span,
+            .menu-title,
+            .system-status,
+            .logout {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="dashboard-container">
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <div>
+                <h2 class="brand-wordmark">AI-DFIS</h2>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+            <a href="/dashboard" class="menu-item">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/investigations" class="menu-item">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>Investigations</span>
+            </a>
+
+            <div class="menu-title">
+                ANALYSIS
+            </div>
+
+
+            <a href="/log-analysis" class="menu-item">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Log Analysis</span>
+            </a>
+
+            {% if filename %}
+<a href="/timeline?file={{ filename }}" class="menu-item">
+{% else %}
+<a href="/timeline" class="menu-item">
+{% endif %}
+
+    <i class="fa-solid fa-timeline"></i>
+    <span>Timeline</span>
+
+</a>
+
+            {% if filename %}
+<a href="/ai-detection?file={{ filename }}" class="menu-item active">
+{% else %}
+<a href="/ai-detection" class="menu-item active">
+{% endif %}
+
+    <i class="fa-solid fa-robot"></i>
+    <span>AI Detection</span>
+
+</a>
+
+
+            <div class="menu-title">
+                SYSTEM
+            </div>
+
+
+            {% if filename %}
+            <a href="/analytics?file={{ filename }}" class="menu-item">
+            {% else %}
+            <a href="/analytics" class="menu-item">
+            {% endif %}
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Analytics</span>
+            </a>
+
+            <a href="#" class="menu-item">
+                <i class="fa-solid fa-file-pdf"></i>
+                <span>Reports</span>
+            </a>
+
+            {% if session.get("role") == "Admin" %}
+            <a href="/users" class="menu-item">
+                <i class="fa-solid fa-users"></i>
+                <span>Users</span>
+            </a>
+            {% endif %}
+
+            <a href="/settings" class="menu-item">
+            <i class="fa-solid fa-gear"></i>
+            Settings
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="system-status">
+                <span class="status-dot"></span>
+                System Online
+            </div>
+
+            <a href="/logout" class="logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+
+        <!-- HEADER -->
+
+        <div class="page-header">
+
+            <div class="page-header-left">
+
+                <div class="page-icon">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+
+                <div>
+
+                    <h1>AI Anomaly Detection</h1>
+
+                    <p>
+                        Machine learning analysis of digital forensic events
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="ai-status">
+
+                <i class="fa-solid fa-brain"></i>
+                AI Analysis Complete
+
+            </div>
+
+        </div>
+
+
+
+        <!-- CASE INFORMATION -->
+
+        <h2 class="section-title">
+            Case Information
+        </h2>
+
+
+        <div class="case-grid">
+
+
+            <div class="case-card">
+
+                <div class="case-label">
+                    Case ID
+                </div>
+
+                <div class="case-value">
+                    INV-2026-024
+                </div>
+
+            </div>
+
+
+            <div class="case-card">
+
+                <div class="case-label">
+                    Investigation
+                </div>
+
+                <div class="case-value">
+                    Unauthorized System Access
+                </div>
+
+            </div>
+
+
+            <div class="case-card">
+
+                <div class="case-label">
+                    Evidence File
+                </div>
+
+                <div class="case-value">
+
+                    {% if filename %}
+                        {{ filename }}
+                    {% else %}
+                        No file selected
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <div class="case-card">
+
+                <div class="case-label">
+                    AI Model
+                </div>
+
+                <div class="case-value">
+                    Isolation Forest
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- AI OVERVIEW -->
+
+        <div class="ai-overview">
+
+
+            <div class="overview-card">
+
+                <div class="overview-top">
+
+                    <div>
+
+                        <p>
+                            TOTAL EVENTS
+                        </p>
+
+                        <h2>
+                            {{ total_events }}
+                        </h2>
+
+                    </div>
+
+                    <div class="overview-icon">
+
+                        <i class="fa-solid fa-list"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="overview-card">
+
+                <div class="overview-top">
+
+                    <div>
+
+                        <p>
+                            AI ANOMALIES
+                        </p>
+
+                        <h2>
+                            {{ anomalies }}
+                        </h2>
+
+                    </div>
+
+                    <div class="overview-icon danger">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="overview-card">
+
+                <div class="overview-top">
+
+                    <div>
+
+                        <p>
+                            NORMAL EVENTS
+                        </p>
+
+                        <h2>
+                            {{ normal_events }}
+                        </h2>
+
+                    </div>
+
+                    <div class="overview-icon success">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- AI MODEL -->
+
+        <section class="model-panel">
+
+            <div class="model-header">
+
+                <h2>
+                    <i class="fa-solid fa-brain"></i>
+                    AI Detection Model
+                </h2>
+
+                <span class="model-badge">
+                    Isolation Forest
+                </span>
+
+            </div>
+
+
+            <div class="model-info">
+
+
+                <div class="model-info-card">
+
+                    <h4>
+                        Detection Method
+                    </h4>
+
+                    <p>
+                        Machine learning based anomaly detection
+                    </p>
+
+                </div>
+
+
+                <div class="model-info-card">
+
+                    <h4>
+                        Analysis Features
+                    </h4>
+
+                    <p>
+                        Log level, message length and suspicious keywords
+                    </p>
+
+                </div>
+
+
+                <div class="model-info-card">
+
+                    <h4>
+                        Purpose
+                    </h4>
+
+                    <p>
+                        Identify unusual activities within digital evidence
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- RESULTS -->
+
+        <section class="results-panel">
+
+            <div class="results-header">
+
+                <h2>
+                    <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    AI Detection Results
+                </h2>
+
+                <span class="results-count">
+                    {{ total_events }} Events
+                </span>
+
+            </div>
+
+
+            {% if events %}
+
+            <div class="table-wrapper">
+
+                <table class="results-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Date</th>
+
+                            <th>Time</th>
+
+                            <th>Event</th>
+
+                            <th>User</th>
+
+                            <th>Log Level</th>
+
+                            <th>AI Result</th>
+
+                            <th>Risk</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                        {% for event in events %}
+
+                        <tr>
+
+
+                            <td class="event-time">
+                                {{ event.date }}
+                            </td>
+
+
+                            <td class="event-time">
+                                {{ event.time }}
+                            </td>
+
+
+                            <td class="event-message">
+                                {{ event.message }}
+                            </td>
+
+
+                            <td class="user-name">
+                                {{ event.username }}
+                            </td>
+
+
+                            <td>
+                                {{ event.level }}
+                            </td>
+
+
+                            <td>
+
+                                {% if event.ai_result == "Anomaly" %}
+
+                                <span class="ai-badge ai-anomaly">
+
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                    Anomaly
+
+                                </span>
+
+                                {% else %}
+
+                                <span class="ai-badge ai-normal">
+
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    Normal
+
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if event.ai_risk == "High" %}
+
+                                <span class="risk-high">
+                                    High
+                                </span>
+
+                                {% elif event.ai_risk == "Low" %}
+
+                                <span class="risk-low">
+                                    Low
+                                </span>
+
+                                {% else %}
+
+                                <span>
+                                    Unknown
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                        </tr>
+
+                        {% endfor %}
+
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            {% else %}
+
+
+            <div class="empty-state">
+
+                <i class="fa-solid fa-robot"></i>
+
+                <p>
+                    No events available for AI analysis.
+                </p>
+
+                <p>
+                    Please analyze an evidence file first.
+                </p>
+
+            </div>
+
+
+            {% endif %}
+
+
+        </section>
+
+
+
+        <!-- EXPLANATION -->
+
+        <section class="explanation-panel">
+
+            <h2>
+                <i class="fa-solid fa-circle-info"></i>
+                AI Analysis Explanation
+            </h2>
+
+            <p>
+
+                The AI detection module analyzes events extracted from
+                the uploaded digital evidence. Isolation Forest is used
+                to identify events that appear unusual compared with
+                other events in the dataset.
+
+            </p>
+
+
+            <div class="next-stage">
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+                Detected anomalies can be reviewed by the investigator
+                and used as evidence for further forensic investigation.
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

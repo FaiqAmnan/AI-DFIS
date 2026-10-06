@@ -1,0 +1,7 @@
+ForensicTest
+
+2026-09-12 09:15:22 INFO User login successful - user01
+2026-09-12 09:17:45 INFO File accessed - confidential.pdf
+2026-09-12 09:20:13 WARNING Multiple failed login attempts - user02
+2026-09-12 09:21:05 WARNING Suspicious login activity detected
+2026-09-12 09:25:30 INFO User logout - user01
