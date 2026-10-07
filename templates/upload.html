@@ -291,6 +291,84 @@
             border: 1px solid #a7f3d0;
         }
 
+        @media (max-width: 700px) {
+            .navbar {
+                gap: 12px;
+                padding: 14px 18px;
+            }
+
+            .back-btn {
+                padding: 9px 12px;
+                font-size: 13px;
+                text-align: center;
+            }
+
+            .container {
+                width: 100%;
+                margin: 22px auto;
+                padding: 16px;
+            }
+
+            .upload-box {
+                padding: 24px;
+            }
+
+            .drop-area {
+                padding: 34px 16px;
+            }
+
+            .drop-area input[type="file"] {
+                max-width: 100%;
+            }
+
+            .file-card {
+                align-items: flex-start;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            .file-name {
+                min-width: 0;
+                overflow-wrap: anywhere;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .navbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .back-btn {
+                width: 100%;
+            }
+
+            .container {
+                margin: 14px auto;
+                padding: 12px;
+            }
+
+            .title h1 {
+                font-size: 25px;
+            }
+
+            .upload-box {
+                padding: 16px;
+            }
+
+            .info {
+                padding: 16px;
+            }
+
+            .file-card {
+                flex-direction: column;
+            }
+
+            .analyze-btn {
+                align-self: flex-start;
+            }
+        }
+
     </style>
 
 </head>
@@ -468,7 +546,7 @@
 
 
                             <a
-                                href="/log-analysis?file={{ file }}"
+                                href="{{ url_for('log_analysis', file=file) }}"
                                 class="analyze-btn">
 
                                 Analyze

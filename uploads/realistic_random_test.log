@@ -1,0 +1,247 @@
+2026-09-26 07:48:08 INFO Session created source=10.24.8.17 - daniel
+2026-09-26 07:53:29 INFO Workstation unlocked device=WS-101 - farah
+2026-09-26 08:01:13 INFO Application started name=Outlook - amir
+2026-09-26 08:03:21 INFO Application started name=Excel - sarah
+2026-09-26 08:12:42 INFO File opened path=/shared/reports/monthly_05.xlsx - daniel
+2026-09-26 08:17:26 INFO File saved path=/shared/reports/monthly_06.xlsx - farah
+2026-09-26 08:20:34 INFO File closed path=/shared/reports/monthly_07.xlsx - amir
+2026-09-26 08:25:55 INFO DNS lookup host=files.internal.local - sarah
+2026-09-26 08:33:39 INFO Network connection established destination=10.24.20.10 - daniel
+2026-09-26 08:35:47 INFO Network connection closed destination=10.24.20.11 - farah
+2026-09-26 08:45:08 INFO Session closed source=10.24.8.31 - amir
+2026-09-26 08:49:52 INFO Session created source=10.24.8.44 - sarah
+2026-09-26 08:53:00 INFO Workstation unlocked device=WS-112 - daniel
+2026-09-26 08:58:21 INFO Application started name=Outlook - farah
+2026-09-26 09:06:05 INFO Application started name=Excel - amir
+2026-09-26 09:08:13 INFO File opened path=/shared/reports/monthly_04.xlsx - sarah
+2026-09-26 09:17:34 INFO File saved path=/shared/reports/monthly_05.xlsx - daniel
+2026-09-26 09:22:18 INFO File closed path=/shared/reports/monthly_06.xlsx - farah
+2026-09-26 09:25:26 INFO DNS lookup host=files.internal.local - amir
+2026-09-26 09:30:47 INFO Network connection established destination=10.24.20.13 - sarah
+2026-09-26 09:38:31 INFO Network connection closed destination=10.24.20.14 - daniel
+2026-09-26 09:40:39 INFO Session closed source=10.24.8.22 - farah
+2026-09-26 09:50:00 INFO Session created source=10.24.8.31 - amir
+2026-09-26 09:54:44 INFO Workstation unlocked device=WS-103 - sarah
+2026-09-26 09:57:52 INFO Application started name=Outlook - daniel
+2026-09-26 10:03:13 INFO Application started name=Excel - farah
+2026-09-26 10:10:57 INFO File opened path=/shared/reports/monthly_03.xlsx - amir
+2026-09-26 10:13:05 INFO File saved path=/shared/reports/monthly_04.xlsx - sarah
+2026-09-26 10:22:26 INFO File closed path=/shared/reports/monthly_05.xlsx - daniel
+2026-09-26 10:27:10 INFO DNS lookup host=files.internal.local - farah
+2026-09-26 10:30:18 INFO Network connection established destination=10.24.20.16 - amir
+2026-09-26 10:35:39 INFO Network connection closed destination=10.24.20.17 - sarah
+2026-09-26 10:43:23 INFO Session closed source=10.24.8.17 - daniel
+2026-09-26 10:45:31 INFO Session created source=10.24.8.22 - farah
+2026-09-26 10:54:52 INFO Workstation unlocked device=WS-114 - amir
+2026-09-26 10:59:36 INFO Application started name=Outlook - sarah
+2026-09-26 11:02:44 INFO Application started name=Excel - daniel
+2026-09-26 11:08:05 INFO File opened path=/shared/reports/monthly_02.xlsx - farah
+2026-09-26 11:15:49 INFO File saved path=/shared/reports/monthly_03.xlsx - amir
+2026-09-26 11:17:57 INFO File closed path=/shared/reports/monthly_04.xlsx - sarah
+2026-09-26 11:27:18 INFO DNS lookup host=files.internal.local - daniel
+2026-09-26 11:32:02 INFO Network connection established destination=10.24.20.11 - farah
+2026-09-26 11:35:10 INFO Network connection closed destination=10.24.20.12 - amir
+2026-09-26 11:40:31 INFO Session closed source=10.24.8.44 - sarah
+2026-09-26 11:48:15 INFO Session created source=10.24.8.17 - daniel
+2026-09-26 11:50:23 INFO Workstation unlocked device=WS-105 - farah
+2026-09-26 11:59:44 INFO Application started name=Outlook - amir
+2026-09-26 12:04:28 INFO Application started name=Excel - sarah
+2026-09-26 12:07:36 INFO File opened path=/shared/reports/monthly_01.xlsx - daniel
+2026-09-26 12:12:57 INFO File saved path=/shared/reports/monthly_02.xlsx - farah
+2026-09-26 12:20:41 INFO File closed path=/shared/reports/monthly_03.xlsx - amir
+2026-09-26 12:22:49 INFO DNS lookup host=files.internal.local - sarah
+2026-09-26 12:32:10 INFO Network connection established destination=10.24.20.14 - daniel
+2026-09-26 12:36:54 INFO Network connection closed destination=10.24.20.15 - farah
+2026-09-26 12:40:02 INFO Session closed source=10.24.8.31 - amir
+2026-09-26 12:45:23 INFO Session created source=10.24.8.44 - sarah
+2026-09-26 12:53:07 INFO Workstation unlocked device=WS-116 - daniel
+2026-09-26 12:55:15 INFO Application started name=Outlook - farah
+2026-09-26 13:04:36 INFO Application started name=Excel - amir
+2026-09-26 13:09:20 INFO File opened path=/shared/reports/monthly_12.xlsx - sarah
+2026-09-26 13:12:28 INFO File saved path=/shared/reports/monthly_01.xlsx - daniel
+2026-09-26 13:17:49 INFO File closed path=/shared/reports/monthly_02.xlsx - farah
+2026-09-26 13:25:33 INFO DNS lookup host=files.internal.local - amir
+2026-09-26 13:27:41 INFO Network connection established destination=10.24.20.17 - sarah
+2026-09-26 13:37:02 INFO Network connection closed destination=10.24.20.10 - daniel
+2026-09-26 13:41:46 INFO Session closed source=10.24.8.22 - farah
+2026-09-26 13:44:54 INFO Session created source=10.24.8.31 - amir
+2026-09-26 13:50:15 INFO Workstation unlocked device=WS-107 - sarah
+2026-09-26 13:57:59 INFO Application started name=Outlook - daniel
+2026-09-26 14:00:07 INFO Application started name=Excel - farah
+2026-09-26 14:09:28 INFO File opened path=/shared/reports/monthly_11.xlsx - amir
+2026-09-26 14:14:12 INFO File saved path=/shared/reports/monthly_12.xlsx - sarah
+2026-09-26 14:17:20 INFO File closed path=/shared/reports/monthly_01.xlsx - daniel
+2026-09-26 14:22:41 INFO DNS lookup host=files.internal.local - farah
+2026-09-26 14:30:25 INFO Network connection established destination=10.24.20.12 - amir
+2026-09-26 14:32:33 INFO Network connection closed destination=10.24.20.13 - sarah
+2026-09-26 14:41:54 INFO Session closed source=10.24.8.17 - daniel
+2026-09-26 14:46:38 INFO Session created source=10.24.8.22 - farah
+2026-09-26 14:49:46 INFO Workstation unlocked device=WS-118 - amir
+2026-09-26 14:55:07 INFO Application started name=Outlook - sarah
+2026-09-26 15:02:51 INFO Application started name=Excel - daniel
+2026-09-26 15:04:59 INFO File opened path=/shared/reports/monthly_10.xlsx - farah
+2026-09-26 15:14:20 INFO File saved path=/shared/reports/monthly_11.xlsx - amir
+2026-09-26 15:19:04 INFO File closed path=/shared/reports/monthly_12.xlsx - sarah
+2026-09-26 15:22:12 INFO DNS lookup host=files.internal.local - daniel
+2026-09-26 15:27:33 INFO Network connection established destination=10.24.20.15 - farah
+2026-09-26 15:35:17 INFO Network connection closed destination=10.24.20.16 - amir
+2026-09-26 15:37:25 INFO Session closed source=10.24.8.44 - sarah
+2026-09-26 15:46:46 INFO Session created source=10.24.8.17 - daniel
+2026-09-26 15:51:30 INFO Workstation unlocked device=WS-109 - farah
+2026-09-26 15:54:38 INFO Application started name=Outlook - amir
+2026-09-26 15:59:59 INFO Application started name=Excel - sarah
+2026-09-26 16:07:43 INFO File opened path=/shared/reports/monthly_09.xlsx - daniel
+2026-09-26 16:09:51 INFO File saved path=/shared/reports/monthly_10.xlsx - farah
+2026-09-26 16:19:12 INFO File closed path=/shared/reports/monthly_11.xlsx - amir
+2026-09-26 16:23:56 INFO DNS lookup host=files.internal.local - sarah
+2026-09-26 16:27:04 INFO Network connection established destination=10.24.20.10 - daniel
+2026-09-26 16:32:25 INFO Network connection closed destination=10.24.20.11 - farah
+2026-09-26 16:40:09 INFO Session closed source=10.24.8.31 - amir
+2026-09-26 16:42:17 INFO Session created source=10.24.8.44 - sarah
+2026-09-26 16:51:38 INFO Workstation unlocked device=WS-100 - daniel
+2026-09-26 16:56:22 INFO Application started name=Outlook - farah
+2026-09-26 16:59:30 INFO Application started name=Excel - amir
+2026-09-26 17:04:51 INFO File opened path=/shared/reports/monthly_08.xlsx - sarah
+2026-09-26 17:12:35 INFO File saved path=/shared/reports/monthly_09.xlsx - daniel
+2026-09-26 17:14:43 INFO File closed path=/shared/reports/monthly_10.xlsx - farah
+2026-09-26 17:24:04 INFO DNS lookup host=files.internal.local - amir
+2026-09-26 17:28:48 INFO Network connection established destination=10.24.20.13 - sarah
+2026-09-26 17:31:56 INFO Network connection closed destination=10.24.20.14 - daniel
+2026-09-26 17:37:17 INFO Session closed source=10.24.8.22 - farah
+2026-09-26 17:45:01 INFO Session created source=10.24.8.31 - amir
+2026-09-26 17:47:09 INFO Workstation unlocked device=WS-111 - sarah
+2026-09-26 17:56:30 INFO Application started name=Outlook - daniel
+2026-09-26 18:01:14 INFO Application started name=Excel - farah
+2026-09-26 18:04:22 INFO File opened path=/shared/reports/monthly_07.xlsx - amir
+2026-09-26 18:09:43 INFO File saved path=/shared/reports/monthly_08.xlsx - sarah
+2026-09-26 18:17:27 INFO File closed path=/shared/reports/monthly_09.xlsx - daniel
+2026-09-26 18:19:35 INFO DNS lookup host=files.internal.local - farah
+2026-09-26 18:28:56 INFO Network connection established destination=10.24.20.16 - amir
+2026-09-26 18:33:40 INFO Network connection closed destination=10.24.20.17 - sarah
+2026-09-26 18:36:48 INFO Session closed source=10.24.8.17 - daniel
+2026-09-26 18:42:09 INFO Session created source=10.24.8.22 - farah
+2026-09-26 18:49:53 INFO Workstation unlocked device=WS-102 - amir
+2026-09-26 18:52:01 INFO Application started name=Outlook - sarah
+2026-09-26 19:01:22 INFO Application started name=Excel - daniel
+2026-09-26 19:06:06 INFO File opened path=/shared/reports/monthly_06.xlsx - farah
+2026-09-26 19:09:14 INFO File saved path=/shared/reports/monthly_07.xlsx - amir
+2026-09-26 19:14:35 INFO File closed path=/shared/reports/monthly_08.xlsx - sarah
+2026-09-26 19:22:19 INFO DNS lookup host=files.internal.local - daniel
+2026-09-26 19:24:27 INFO Network connection established destination=10.24.20.11 - farah
+2026-09-26 19:33:48 INFO Network connection closed destination=10.24.20.12 - amir
+2026-09-26 19:38:32 INFO Session closed source=10.24.8.44 - sarah
+2026-09-26 19:41:40 INFO Session created source=10.24.8.17 - daniel
+2026-09-26 19:47:01 INFO Workstation unlocked device=WS-113 - farah
+2026-09-26 19:54:45 INFO Application started name=Outlook - amir
+2026-09-26 19:56:53 INFO Application started name=Excel - sarah
+2026-09-26 20:06:14 INFO File opened path=/shared/reports/monthly_05.xlsx - daniel
+2026-09-26 20:10:58 INFO File saved path=/shared/reports/monthly_06.xlsx - farah
+2026-09-26 20:14:06 INFO File closed path=/shared/reports/monthly_07.xlsx - amir
+2026-09-26 20:19:27 INFO DNS lookup host=files.internal.local - sarah
+2026-09-26 20:27:11 INFO Network connection established destination=10.24.20.14 - daniel
+2026-09-26 20:29:19 INFO Network connection closed destination=10.24.20.15 - farah
+2026-09-26 20:38:40 INFO Session closed source=10.24.8.31 - amir
+2026-09-26 20:43:24 INFO Session created source=10.24.8.44 - sarah
+2026-09-26 20:46:32 INFO Workstation unlocked device=WS-104 - daniel
+2026-09-26 20:51:53 INFO Application started name=Outlook - farah
+2026-09-26 20:59:37 INFO Application started name=Excel - amir
+2026-09-26 21:01:45 INFO File opened path=/shared/reports/monthly_04.xlsx - sarah
+2026-09-26 21:11:06 INFO File saved path=/shared/reports/monthly_05.xlsx - daniel
+2026-09-26 21:15:50 INFO File closed path=/shared/reports/monthly_06.xlsx - farah
+2026-09-26 21:18:58 INFO DNS lookup host=files.internal.local - amir
+2026-09-26 21:24:19 INFO Network connection established destination=10.24.20.17 - sarah
+2026-09-26 21:32:03 INFO Network connection closed destination=10.24.20.10 - daniel
+2026-09-26 21:34:11 INFO Session closed source=10.24.8.22 - farah
+2026-09-26 21:43:32 INFO Session created source=10.24.8.31 - amir
+2026-09-26 21:48:16 INFO Workstation unlocked device=WS-115 - sarah
+2026-09-26 21:51:24 INFO Application started name=Outlook - daniel
+2026-09-26 21:56:45 INFO Application started name=Excel - farah
+2026-09-26 22:04:29 INFO File opened path=/shared/reports/monthly_03.xlsx - amir
+2026-09-26 22:06:37 INFO File saved path=/shared/reports/monthly_04.xlsx - sarah
+2026-09-26 22:15:58 INFO File closed path=/shared/reports/monthly_05.xlsx - daniel
+2026-09-26 22:20:42 INFO DNS lookup host=files.internal.local - farah
+2026-09-26 22:23:50 INFO Network connection established destination=10.24.20.12 - amir
+2026-09-26 22:29:11 INFO Network connection closed destination=10.24.20.13 - sarah
+2026-09-26 22:36:55 INFO Session closed source=10.24.8.17 - daniel
+2026-09-26 22:39:03 INFO Session created source=10.24.8.22 - farah
+2026-09-26 22:48:24 INFO Workstation unlocked device=WS-106 - amir
+2026-09-26 22:53:08 INFO Application started name=Outlook - sarah
+2026-09-26 22:56:16 INFO Application started name=Excel - daniel
+2026-09-26 23:01:37 INFO File opened path=/shared/reports/monthly_02.xlsx - farah
+2026-09-26 23:09:21 INFO File saved path=/shared/reports/monthly_03.xlsx - amir
+2026-09-26 23:11:29 INFO File closed path=/shared/reports/monthly_04.xlsx - sarah
+2026-09-26 23:20:50 INFO DNS lookup host=files.internal.local - daniel
+2026-09-26 23:25:34 INFO Network connection established destination=10.24.20.15 - farah
+2026-09-26 23:28:42 INFO Network connection closed destination=10.24.20.16 - amir
+2026-09-26 23:34:03 INFO Session closed source=10.24.8.44 - sarah
+2026-09-26 23:41:47 INFO Session created source=10.24.8.17 - daniel
+2026-09-26 23:43:55 INFO Workstation unlocked device=WS-117 - farah
+2026-09-26 23:53:16 INFO Application started name=Outlook - amir
+2026-09-26 23:58:00 INFO Application started name=Excel - sarah
+2026-09-27 00:01:08 INFO File opened path=/shared/reports/monthly_01.xlsx - daniel
+2026-09-27 00:06:29 INFO File saved path=/shared/reports/monthly_02.xlsx - farah
+2026-09-27 00:14:13 INFO File closed path=/shared/reports/monthly_03.xlsx - amir
+2026-09-27 00:16:21 INFO DNS lookup host=files.internal.local - sarah
+2026-09-27 00:25:42 INFO Network connection established destination=10.24.20.10 - daniel
+2026-09-27 02:41:22 INFO File opened path=/archive/2018/record_001.xlsx - daniel
+2026-09-27 02:41:35 INFO File opened path=/archive/2018/record_002.xlsx - daniel
+2026-09-27 02:41:49 INFO File opened path=/archive/2018/record_003.xlsx - daniel
+2026-09-27 02:42:04 INFO File opened path=/archive/2018/record_004.xlsx - daniel
+2026-09-27 02:42:16 INFO File opened path=/archive/2018/record_005.xlsx - daniel
+2026-09-27 02:42:29 INFO File opened path=/archive/2018/record_006.xlsx - daniel
+2026-09-27 02:42:43 INFO File opened path=/archive/2018/record_007.xlsx - daniel
+2026-09-27 02:42:58 INFO File opened path=/archive/2018/record_008.xlsx - daniel
+2026-09-27 02:43:10 INFO File opened path=/archive/2018/record_009.xlsx - daniel
+2026-09-27 02:43:23 INFO File opened path=/archive/2018/record_010.xlsx - daniel
+2026-09-27 02:43:37 INFO File opened path=/archive/2018/record_011.xlsx - daniel
+2026-09-27 02:43:52 INFO File opened path=/archive/2018/record_012.xlsx - daniel
+2026-09-27 02:44:04 INFO File opened path=/archive/2018/record_013.xlsx - daniel
+2026-09-27 02:44:17 INFO File opened path=/archive/2018/record_014.xlsx - daniel
+2026-09-27 02:44:31 INFO File opened path=/archive/2018/record_015.xlsx - daniel
+2026-09-27 02:44:46 INFO File opened path=/archive/2018/record_016.xlsx - daniel
+2026-09-27 02:44:58 INFO File opened path=/archive/2018/record_017.xlsx - daniel
+2026-09-27 02:45:11 INFO File opened path=/archive/2018/record_018.xlsx - daniel
+2026-09-27 02:45:25 INFO File opened path=/archive/2018/record_019.xlsx - daniel
+2026-09-27 02:45:40 INFO File opened path=/archive/2018/record_020.xlsx - daniel
+2026-09-27 02:45:52 INFO File opened path=/archive/2018/record_021.xlsx - daniel
+2026-09-27 02:46:05 INFO File opened path=/archive/2018/record_022.xlsx - daniel
+2026-09-27 02:46:19 INFO File opened path=/archive/2018/record_023.xlsx - daniel
+2026-09-27 02:46:34 INFO File opened path=/archive/2018/record_024.xlsx - daniel
+2026-09-27 02:46:46 INFO File opened path=/archive/2018/record_025.xlsx - daniel
+2026-09-27 02:46:59 INFO File opened path=/archive/2018/record_026.xlsx - daniel
+2026-09-27 02:47:13 INFO File opened path=/archive/2018/record_027.xlsx - daniel
+2026-09-27 02:47:28 INFO File opened path=/archive/2018/record_028.xlsx - daniel
+2026-09-27 02:47:40 INFO File opened path=/archive/2018/record_029.xlsx - daniel
+2026-09-27 02:47:53 INFO File opened path=/archive/2018/record_030.xlsx - daniel
+2026-09-27 02:48:07 INFO File opened path=/archive/2018/record_031.xlsx - daniel
+2026-09-27 02:48:22 INFO File opened path=/archive/2018/record_032.xlsx - daniel
+2026-09-27 03:19:27 INFO File opened path=/shared/reports/archive_01.xlsx source=172.18.4.91 - farah
+2026-09-27 03:20:34 INFO File opened path=/shared/reports/archive_02.xlsx source=172.18.4.91 - farah
+2026-09-27 03:21:41 INFO File opened path=/shared/reports/archive_03.xlsx source=172.18.4.91 - farah
+2026-09-27 03:22:48 INFO File opened path=/shared/reports/archive_04.xlsx source=172.18.4.91 - farah
+2026-09-27 03:23:55 INFO File opened path=/shared/reports/archive_05.xlsx source=172.18.4.91 - farah
+2026-09-27 03:25:02 INFO File opened path=/shared/reports/archive_06.xlsx source=172.18.4.91 - farah
+2026-09-27 03:26:09 INFO File opened path=/shared/reports/archive_07.xlsx source=172.18.4.91 - farah
+2026-09-27 03:27:16 INFO File opened path=/shared/reports/archive_08.xlsx source=172.18.4.91 - farah
+2026-09-27 03:28:23 INFO File opened path=/shared/reports/archive_09.xlsx source=172.18.4.91 - farah
+2026-09-27 03:29:30 INFO File opened path=/shared/reports/archive_10.xlsx source=172.18.4.91 - farah
+2026-09-27 03:30:37 INFO File opened path=/shared/reports/archive_11.xlsx source=172.18.4.91 - farah
+2026-09-27 03:31:44 INFO File opened path=/shared/reports/archive_12.xlsx source=172.18.4.91 - farah
+2026-09-27 08:08:30 INFO File opened path=/shared/general/document_01.docx source=10.24.8.22 - farah
+2026-09-27 08:14:45 INFO File opened path=/shared/general/document_02.docx source=10.24.8.31 - amir
+2026-09-27 08:22:00 INFO File opened path=/shared/general/document_03.docx source=10.24.8.44 - sarah
+2026-09-27 08:30:15 INFO File opened path=/shared/general/document_04.docx source=10.24.8.17 - daniel
+2026-09-27 08:35:30 INFO File opened path=/shared/general/document_05.docx source=10.24.8.22 - farah
+2026-09-27 08:41:45 INFO File opened path=/shared/general/document_06.docx source=10.24.8.31 - amir
+2026-09-27 08:49:00 INFO File opened path=/shared/general/document_07.docx source=10.24.8.44 - sarah
+2026-09-27 08:57:15 INFO File opened path=/shared/general/document_08.docx source=10.24.8.17 - daniel
+2026-09-27 09:02:30 INFO File opened path=/shared/general/document_09.docx source=10.24.8.22 - farah
+2026-09-27 09:08:45 INFO File opened path=/shared/general/document_10.docx source=10.24.8.31 - amir
+2026-09-27 09:16:00 INFO File opened path=/shared/general/document_11.docx source=10.24.8.44 - sarah
+2026-09-27 09:24:15 INFO File opened path=/shared/general/document_12.docx source=10.24.8.17 - daniel
+2026-09-27 09:29:30 INFO File opened path=/shared/general/document_13.docx source=10.24.8.22 - farah
+2026-09-27 09:35:45 INFO File opened path=/shared/general/document_14.docx source=10.24.8.31 - amir
+2026-09-27 09:43:00 INFO File opened path=/shared/general/document_15.docx source=10.24.8.44 - sarah
+2026-09-27 09:51:15 INFO File opened path=/shared/general/document_16.docx source=10.24.8.17 - daniel
+2026-09-27 09:56:30 INFO File opened path=/shared/general/document_17.docx source=10.24.8.22 - farah
+2026-09-27 10:02:45 INFO File opened path=/shared/general/document_18.docx source=10.24.8.31 - amir

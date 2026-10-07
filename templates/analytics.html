@@ -355,6 +355,38 @@
             }
         }
 
+        @media (max-width: 560px) {
+            .main {
+                width: calc(100% - 70px);
+                padding: 18px 12px;
+            }
+
+            .header {
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .case-box,
+            .card,
+            .panel {
+                padding: 17px;
+            }
+
+            .case-info {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+        }
+
     </style>
 
 </head>
@@ -453,7 +485,7 @@
 
         <a href="/settings" class="menu-item">
         <i class="fa-solid fa-gear"></i>
-         Settings
+        <span>Settings</span>
         </a>
 
     </nav>

@@ -279,6 +279,218 @@ body {
     }
 }
 
+/* Mobile layout refinements shared by the application pages */
+@media (max-width: 750px) {
+    .dashboard-container {
+        min-width: 0;
+        overflow-x: hidden;
+    }
+
+    .dashboard-container > .sidebar {
+        width: 70px !important;
+        overflow-x: hidden;
+    }
+
+    .dashboard-container > .sidebar .logo {
+        width: 50px !important;
+        height: 50px !important;
+        margin: 0 auto !important;
+        padding: 4px !important;
+        justify-content: center;
+    }
+
+    .dashboard-container > .sidebar .logo > div:last-child,
+    .dashboard-container > .sidebar .menu-item span,
+    .dashboard-container > .sidebar .menu-title,
+    .dashboard-container > .sidebar .system-status,
+    .dashboard-container > .sidebar .logout {
+        display: none !important;
+    }
+
+    .dashboard-container > .sidebar .sidebar-menu {
+        padding: 14px 6px;
+    }
+
+    .dashboard-container > .sidebar .menu-item {
+        justify-content: center;
+        gap: 0;
+        padding: 12px 0;
+    }
+
+    .dashboard-container > .sidebar .menu-item i {
+        width: auto;
+        font-size: 16px;
+    }
+
+    .dashboard-container > .main-content,
+    .dashboard-container > .main {
+        width: calc(100% - 70px) !important;
+        min-width: 0;
+        margin-left: 70px !important;
+    }
+
+    .main-content,
+    .main,
+    .dashboard-content,
+    .investigation-content,
+    .evidence-page,
+    .log-content,
+    .workflow-main,
+    .audit-content {
+        min-width: 0;
+        padding: 22px 18px !important;
+    }
+
+    .settings-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .settings-card {
+        min-width: 0;
+        padding: 20px;
+    }
+
+    .settings-card .info-row {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .settings-card .value {
+        max-width: 65%;
+        overflow-wrap: anywhere;
+        text-align: right;
+    }
+
+    .evidence-table-wrap,
+    .cases-table,
+    .table-card,
+    .table-container {
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .topbar {
+        min-height: 72px;
+        height: auto;
+        gap: 12px;
+        padding: 14px 18px;
+    }
+
+    .topbar h1 {
+        font-size: 20px;
+    }
+
+    .header,
+    .page-header,
+    .page-heading {
+        flex-wrap: wrap;
+        gap: 14px;
+    }
+}
+
+@media (max-width: 560px) {
+    .main-content,
+    .main,
+    .dashboard-content,
+    .investigation-content,
+    .evidence-page,
+    .log-content,
+    .workflow-main,
+    .audit-content {
+        padding: 16px 12px !important;
+    }
+
+    .dashboard-grid,
+    .stats-grid,
+    .case-stats,
+    .evidence-stats,
+    .log-stats,
+    .settings-grid,
+    .content-grid,
+    .info-grid,
+    .case-info,
+    .ai-overview,
+    .cards {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .welcome-box,
+    .page-header,
+    .panel-header,
+    .case-toolbar,
+    .analysis-toolbar,
+    .log-filter-panel {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .case-toolbar,
+    .filter-group,
+    .page-header-actions {
+        width: 100%;
+    }
+
+    .filter-group {
+        flex-wrap: wrap;
+    }
+
+    .filter-group select,
+    .search-box,
+    .evidence-search,
+    .log-search,
+    .audit-search {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .settings-card {
+        padding: 16px;
+    }
+
+    .settings-card .info-row {
+        flex-wrap: wrap;
+    }
+
+    .settings-card .value {
+        max-width: 100%;
+        text-align: left;
+    }
+
+    .topbar {
+        align-items: flex-start;
+        padding: 12px;
+    }
+
+    .user-info {
+        display: none;
+    }
+
+    .page-header h1,
+    .header h1 {
+        font-size: 22px;
+    }
+
+    .modal-content,
+    .dialog-content {
+        width: calc(100vw - 24px);
+        max-width: none;
+        margin: 12px;
+    }
+}
+
+@media (max-width: 380px) {
+    .dashboard-container > .sidebar {
+        width: 56px !important;
+    }
+
+    .dashboard-container > .main-content,
+    .dashboard-container > .main {
+        width: calc(100% - 56px) !important;
+        margin-left: 56px !important;
+    }
+}
+
 /* =========================================
    AI-DFIS DASHBOARD
    ========================================= */

@@ -2476,7 +2476,17 @@ def upload():
 
 
 
-    uploaded_files = os.listdir(UPLOAD_FOLDER)
+    uploaded_files = sorted(
+        (
+            filename
+            for filename in os.listdir(UPLOAD_FOLDER)
+            if os.path.isfile(os.path.join(UPLOAD_FOLDER, filename))
+        ),
+        key=lambda filename: os.path.getmtime(
+            os.path.join(UPLOAD_FOLDER, filename)
+        ),
+        reverse=True
+    )[:1]
 
 
 

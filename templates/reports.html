@@ -287,6 +287,12 @@
             font-size: 11px;
         }
 
+        .report-table-wrap {
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .summary-box {
             background: #eff6ff;
             border-left: 4px solid #2563eb;
@@ -348,6 +354,33 @@
 
             .main {
                 margin-left: 70px;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .main {
+                width: calc(100% - 70px);
+                padding: 18px 12px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .report-card {
+                padding: 18px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-area {
+                flex-wrap: wrap;
+            }
+
+            .report-table-wrap table {
+                min-width: 640px;
             }
         }
 
@@ -657,6 +690,7 @@
                 Detected Events
             </h3>
 
+            <div class="report-table-wrap">
             <table>
 
                 <thead>
@@ -725,6 +759,7 @@
                 </tbody>
 
             </table>
+            </div>
 
         </div>
 
