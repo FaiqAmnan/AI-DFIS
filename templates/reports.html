@@ -275,6 +275,18 @@
             font-weight: bold;
         }
 
+        .ai-result {
+            color: #344054;
+            font-weight: 600;
+        }
+
+        .ai-risk {
+            display: inline-block;
+            margin-top: 3px;
+            color: #667085;
+            font-size: 11px;
+        }
+
         .summary-box {
             background: #eff6ff;
             border-left: 4px solid #2563eb;
@@ -628,6 +640,11 @@
                     <strong>{{ high_risk_events }}</strong>
                 </div>
 
+                <div class="info-box">
+                    <span>AI Anomalies</span>
+                    <strong>{{ anomalies }}</strong>
+                </div>
+
             </div>
 
         </div>
@@ -649,7 +666,8 @@
                         <th>Time</th>
                         <th>Level</th>
                         <th>Event</th>
-                        <th>Risk</th>
+                        <th>Log Severity</th>
+                        <th>AI Analysis</th>
                     </tr>
 
                 </thead>
@@ -692,6 +710,14 @@
 
                         </td>
 
+                        <td>
+                            <span class="ai-result">{{ event.ai_result }}</span>
+                            <br>
+                            <span class="ai-risk">
+                                {{ event.ai_risk }} risk - {{ event.ai_score }}%
+                            </span>
+                        </td>
+
                     </tr>
 
                     {% endfor %}
@@ -722,6 +748,10 @@
                 A total of
                 <strong>{{ suspicious_events }}</strong>
                 suspicious events were identified.
+
+                The AI analysis identified
+                <strong>{{ anomalies }}</strong>
+                anomalous events.
 
                 {% if suspicious_events > 0 %}
 

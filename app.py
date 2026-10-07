@@ -3173,6 +3173,32 @@ def reports():
 
 
 
+    analyzed_events, total_events, anomalies, normal_events = analyze_log_file(
+        filename
+    )
+
+    events = analyzed_events
+
+    suspicious_events = sum(
+        1
+        for event in events
+        if event["level"].upper() in {"WARNING", "ERROR"}
+    )
+
+    for event in events:
+
+        event["severity"] = {
+            "WARNING": "High",
+            "ERROR": "Critical",
+            "INFO": "Low",
+        }.get(event["level"].upper(), "Medium")
+
+    high_risk_events = sum(
+        1
+        for event in events
+        if event["severity"] in {"High", "Critical"}
+    )
+
     return render_template(
 
 
@@ -3194,6 +3220,8 @@ def reports():
         suspicious_events=suspicious_events,
 
         high_risk_events=high_risk_events,
+
+        anomalies=anomalies,
 
         print_view=print_view
 
