@@ -60,6 +60,15 @@
             position: relative;
         }
 
+        .case-action-menu[open] {
+            z-index: 30;
+        }
+
+        .cases-panel {
+            overflow: visible;
+            padding-bottom: 220px;
+        }
+
         .case-action-menu summary {
             list-style: none;
             border: none;
@@ -83,7 +92,7 @@
             top: calc(100% + 4px);
             right: 0;
             z-index: 20;
-            min-width: 145px;
+            min-width: 190px;
             padding: 4px;
             background: white;
             border: 1px solid #e5e7eb;
@@ -110,6 +119,54 @@
         .case-action-options a:hover,
         .case-action-options button:hover {
             background: #f1f5f9;
+        }
+
+        .case-status-form {
+            padding: 8px 10px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .case-status-form label {
+            display: block;
+            margin-bottom: 5px;
+            color: #344054;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .case-status-form select {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            color: #344054;
+            font: inherit;
+            font-size: 11px;
+        }
+
+        .case-status-form button {
+            margin-top: 5px;
+            padding-left: 0;
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        .case-action-options .delete-case-button {
+            color: #b42318;
+        }
+
+        .case-action-options .delete-case-button:hover {
+            background: #fef3f2;
+        }
+
+        .investigation-error {
+            margin: 15px 20px 0;
+            padding: 10px 12px;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            background: #fef2f2;
+            color: #b91c1c;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -273,36 +330,34 @@
 
                 <div class="user-area">
 
-                    <div class="notification">
-
-                        <i class="fa-regular fa-bell"></i>
-
-                        <span class="notification-dot"></span>
-
-                    </div>
+                    
 
 
-                    <div class="user-profile">
+                    <details class="user-profile-menu">
+                        <summary class="user-profile" aria-label="Open user menu">
+                            <div class="avatar">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
 
-                        <div class="avatar">
+                            <div class="user-info">
+                                <strong>{{ session.get("name", "User") }}</strong>
+                                <span>{{ session.get("role", "User") }}</span>
+                            </div>
 
-                            <i class="fa-solid fa-user"></i>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </summary>
 
+                        <div class="user-profile-options">
+                            <a href="{{ url_for('settings') }}">
+                                <i class="fa-solid fa-gear"></i>
+                                Settings
+                            </a>
+                            <a href="{{ url_for('logout') }}">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                Log out
+                            </a>
                         </div>
-
-
-                        <div class="user-info">
-
-                            <strong>{{ session.get("name", "User") }}</strong>
-
-                            <span>{{ session.get("role", "User") }}</span>
-
-                        </div>
-
-
-                        <i class="fa-solid fa-chevron-down"></i>
-
-                    </div>
+                    </details>
 
                 </div>
 
@@ -476,6 +531,10 @@
 
                 <div class="cases-panel">
 
+                    {% if error %}
+                    <div class="investigation-error" role="alert">{{ error }}</div>
+                    {% endif %}
+
                     <div class="cases-header">
 
                         <div>
@@ -552,12 +611,40 @@
                                         <i class="fa-solid fa-ellipsis"></i>
                                     </summary>
                                     <div class="case-action-options">
+                                        <form class="case-status-form"
+                                              action="{{ url_for('update_investigation_status', investigation_id=investigation.id) }}"
+                                              method="POST">
+                                            <label for="status-{{ investigation.id }}">Change status</label>
+                                            <select id="status-{{ investigation.id }}" name="status">
+                                                {% for status in ["Investigating", "Analysis", "Completed", "Archived"] %}
+                                                <option value="{{ status }}" {% if investigation.status == status %}selected{% endif %}>
+                                                    {{ status }}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                            <button type="submit">Save status</button>
+                                        </form>
                                         <a href="{{ url_for('evidence', investigation_id=investigation.id) }}">
                                             View Evidence
                                         </a>
+                                        <button type="button"
+                                                data-edit-case
+                                                data-case-id="{{ investigation.case_id }}"
+                                                data-case-name="{{ investigation.case_name }}"
+                                                data-description="{{ investigation.description or '' }}"
+                                                data-update-url="{{ url_for('edit_investigation', investigation_id=investigation.id) }}">
+                                            Edit Case
+                                        </button>
                                         <button type="button" data-copy-case-id="{{ investigation.case_id }}">
                                             Copy Case ID
                                         </button>
+                                        {% if session.get("role") == "Admin" %}
+                                        <form action="{{ url_for('delete_investigation', investigation_id=investigation.id) }}"
+                                              method="POST"
+                                              onsubmit="return confirm('Permanently delete this case and all evidence linked to it? Linked evidence records will be deleted, and uploaded files will be removed unless another evidence record still references them.');">
+                                            <button type="submit" class="delete-case-button">Delete Case</button>
+                                        </form>
+                                        {% endif %}
                                     </div>
                                 </details>
                             </div>
@@ -934,6 +1021,50 @@
 
 </div>
 
+<div id="edit-investigation" class="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <div>
+                <h2>Edit Investigation</h2>
+                <p>Update the case ID and case information.</p>
+            </div>
+            <a href="#" class="close-button" aria-label="Close edit form">&times;</a>
+        </div>
+
+        <form id="edit-investigation-form" method="POST">
+            <div class="form-group">
+                <label for="edit-case-id">Case ID</label>
+                <input type="text" id="edit-case-id" name="case_id" required>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-case-name">Case Name</label>
+                <input type="text" id="edit-case-name" name="case_name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-case-description">Description</label>
+                <textarea id="edit-case-description"
+                          name="description"
+                          rows="5"
+                          placeholder="Enter investigation description..."></textarea>
+            </div>
+
+            <div class="form-actions">
+                <a href="#" class="cancel-button">Cancel</a>
+                <button type="submit" class="save-button">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Save Changes
+                </button>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
 <script>
     const investigationSearch = document.getElementById("investigation-search");
     const statusFilter = document.getElementById("investigation-status-filter");
@@ -1049,6 +1180,18 @@
             window.setTimeout(function () {
                 button.textContent = originalText;
             }, 1500);
+        });
+    });
+
+    const editInvestigationForm = document.getElementById("edit-investigation-form");
+    document.querySelectorAll("[data-edit-case]").forEach(function (button) {
+        button.addEventListener("click", function () {
+            editInvestigationForm.action = button.dataset.updateUrl;
+            document.getElementById("edit-case-id").value = button.dataset.caseId;
+            document.getElementById("edit-case-name").value = button.dataset.caseName;
+            document.getElementById("edit-case-description").value = button.dataset.description;
+            button.closest(".case-action-menu").removeAttribute("open");
+            window.location.hash = "edit-investigation";
         });
     });
 </script>

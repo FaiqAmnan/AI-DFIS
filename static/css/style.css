@@ -510,6 +510,63 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+    list-style: none;
+    cursor: pointer;
+}
+
+.user-profile::-webkit-details-marker {
+    display: none;
+}
+
+.user-profile-menu {
+    position: relative;
+}
+
+.user-profile-menu[open] {
+    z-index: 30;
+}
+
+.user-profile-menu[open] .user-profile > .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+.user-profile-options {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 31;
+    min-width: 160px;
+    padding: 5px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+}
+
+.user-profile-options a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 5px;
+    color: #344054;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.user-profile-options a:hover,
+.user-profile-options a:focus-visible {
+    background: #f1f5f9;
+    outline: none;
+}
+
+.user-profile-options a:last-child {
+    color: #b42318;
+}
+
+.user-profile-options a:last-child:hover,
+.user-profile-options a:last-child:focus-visible {
+    background: #fef3f2;
 }
 
 .avatar {
@@ -1997,4 +2054,3 @@ body {
         grid-template-columns: 1fr;
     }
 }
-

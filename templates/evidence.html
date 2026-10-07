@@ -46,6 +46,30 @@
             background: #1d4ed8;
         }
 
+        .page-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .back-investigations-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 18px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            background: white;
+            color: #374151;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-investigations-btn:hover {
+            background: #f9fafb;
+        }
+
         .evidence-panel {
             background: white;
             border: 1px solid #e5e7eb;
@@ -771,13 +795,16 @@
         </div>
 
 
-        <a href="{{ url_for('upload', investigation_id=selected_investigation.id) if selected_investigation else url_for('upload') }}" class="add-evidence-btn">
-
-            <i class="fa-solid fa-plus"></i>
-
-            Add Evidence
-
-        </a>
+        <div class="page-header-actions">
+            <a href="{{ url_for('investigations') }}" class="back-investigations-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Investigations
+            </a>
+            <a href="{{ url_for('upload', investigation_id=selected_investigation.id) if selected_investigation else url_for('upload') }}" class="add-evidence-btn">
+                <i class="fa-solid fa-plus"></i>
+                Add Evidence
+            </a>
+        </div>
 
     </div>
 

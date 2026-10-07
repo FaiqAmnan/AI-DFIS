@@ -523,7 +523,36 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 
+def get_analysis_filename():
 
+    filename = request.args.get("file")
+
+    if filename:
+
+        if (
+            os.path.basename(filename) != filename
+            or not os.path.isfile(os.path.join(UPLOAD_FOLDER, filename))
+        ):
+
+            return None
+
+        session["analysis_file"] = filename
+
+        return filename
+
+    filename = session.get("analysis_file")
+
+    if (
+        isinstance(filename, str)
+        and os.path.basename(filename) == filename
+        and os.path.isfile(os.path.join(UPLOAD_FOLDER, filename))
+    ):
+
+        return filename
+
+    session.pop("analysis_file", None)
+
+    return None
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -1011,8 +1040,8 @@ def investigations():
     return render_template(
 
         "investigations.html",
-
-        investigation_list=investigation_list
+        investigation_list=investigation_list,
+        error=request.args.get("error")
 
     )
 
@@ -1137,6 +1166,157 @@ def add_investigation():
     conn.close()
 
 
+
+    return redirect(url_for("investigations"))
+
+
+@app.route("/investigations/<int:investigation_id>/edit", methods=["POST"])
+def edit_investigation(investigation_id):
+
+    case_id = request.form.get("case_id", "").strip()
+    case_name = request.form.get("case_name", "").strip()
+    description = request.form.get("description", "").strip()
+
+    if not case_id or not case_name:
+        return redirect(url_for(
+            "investigations",
+            error="Case ID and case name are required."
+        ))
+
+    conn = get_db_connection()
+    investigation = conn.execute(
+        "SELECT case_id FROM investigations WHERE id = ?",
+        (investigation_id,)
+    ).fetchone()
+
+    if investigation is None:
+        conn.close()
+        abort(404)
+
+    duplicate_case = conn.execute(
+        "SELECT 1 FROM investigations WHERE case_id = ? AND id != ?",
+        (case_id, investigation_id)
+    ).fetchone()
+
+    if duplicate_case:
+        conn.close()
+        return redirect(url_for(
+            "investigations",
+            error=f"Case ID {case_id} is already in use."
+        ))
+
+    conn.execute(
+        """
+        UPDATE investigations
+        SET case_id = ?, case_name = ?, description = ?
+        WHERE id = ?
+        """,
+        (case_id, case_name, description, investigation_id)
+    )
+    conn.commit()
+    conn.close()
+
+    log_action(
+        "Edit Investigation",
+        f"Updated case {investigation['case_id']} to {case_id}"
+    )
+
+    return redirect(url_for("investigations"))
+
+
+@app.route("/investigations/<int:investigation_id>/status", methods=["POST"])
+def update_investigation_status(investigation_id):
+
+    allowed_statuses = {"Investigating", "Analysis", "Completed", "Archived"}
+    status = request.form.get("status", "")
+
+    if status not in allowed_statuses:
+        abort(400, description="Invalid investigation status.")
+
+    conn = get_db_connection()
+    investigation = conn.execute(
+        "SELECT case_id, status FROM investigations WHERE id = ?",
+        (investigation_id,)
+    ).fetchone()
+
+    if investigation is None:
+        conn.close()
+        abort(404)
+
+    conn.execute(
+        "UPDATE investigations SET status = ? WHERE id = ?",
+        (status, investigation_id)
+    )
+    conn.commit()
+    conn.close()
+
+    log_action(
+        "Change Investigation Status",
+        f"Changed {investigation['case_id']} status from "
+        f"{investigation['status']} to {status}"
+    )
+
+    return redirect(url_for("investigations"))
+
+
+@app.route("/investigations/<int:investigation_id>/delete", methods=["POST"])
+def delete_investigation(investigation_id):
+
+    if session.get("role") != "Admin":
+        abort(403)
+
+    conn = get_db_connection()
+    investigation = conn.execute(
+        "SELECT case_id FROM investigations WHERE id = ?",
+        (investigation_id,)
+    ).fetchone()
+
+    if investigation is None:
+        conn.close()
+        abort(404)
+
+    linked_evidence = conn.execute(
+        "SELECT filename FROM evidence WHERE investigation_id = ?",
+        (investigation_id,)
+    ).fetchall()
+
+    conn.execute(
+        "DELETE FROM evidence WHERE investigation_id = ?",
+        (investigation_id,)
+    )
+    conn.execute(
+        "DELETE FROM investigations WHERE id = ?",
+        (investigation_id,)
+    )
+
+    evidence_files = []
+    for filename in {row["filename"] for row in linked_evidence}:
+        remaining_records = conn.execute(
+            "SELECT COUNT(*) FROM evidence WHERE filename = ?",
+            (filename,)
+        ).fetchone()[0]
+        evidence_files.append((filename, remaining_records))
+
+    conn.commit()
+    conn.close()
+
+    log_action(
+        "Delete Investigation",
+        f"Deleted case {investigation['case_id']} and its linked evidence records"
+    )
+
+    upload_root = os.path.realpath(UPLOAD_FOLDER)
+    for filename, remaining_records in evidence_files:
+        if remaining_records != 0 or os.path.basename(filename) != filename:
+            continue
+
+        file_path = os.path.realpath(os.path.join(upload_root, filename))
+        if os.path.commonpath([upload_root, file_path]) == upload_root:
+            try:
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+            except OSError as error:
+                print("Evidence file cleanup error:", error)
 
     return redirect(url_for("investigations"))
 
@@ -1335,11 +1515,9 @@ def verify_integrity(evidence_id):
             url_for(
 
                 "evidence",
-
+                investigation_id=evidence["investigation_id"],
                 integrity="missing",
-
                 file=filename
-
             )
 
         )
@@ -1399,11 +1577,9 @@ def verify_integrity(evidence_id):
         url_for(
 
             "evidence",
-
+            investigation_id=evidence["investigation_id"],
             integrity=result,
-
             file=filename
-
         )
 
     )
@@ -1514,7 +1690,7 @@ def log_analysis():
 
     # Get the exact evidence filename from the URL
 
-    filename = request.args.get("file")
+    filename = get_analysis_filename()
 
 
 
@@ -1802,7 +1978,7 @@ def timeline():
 
 
 
-    filename = request.args.get("file")
+    filename = get_analysis_filename()
 
 
 
@@ -2320,10 +2496,8 @@ def upload():
 
 
 
-@app.route("/ai-detection")
-def ai_detection():
+def analyze_log_file(filename):
 
-    filename = request.args.get("file")
     log_content = ""
     events = []
 
@@ -2673,6 +2847,15 @@ def ai_detection():
         if event["ai_result"] == "Normal"
     )
 
+    return events, total_events, anomalies, normal_events
+
+
+@app.route("/ai-detection")
+def ai_detection():
+
+    filename = get_analysis_filename()
+    events, total_events, anomalies, normal_events = analyze_log_file(filename)
+
     return render_template(
 
         "ai_detection.html",
@@ -2696,135 +2879,15 @@ def analytics():
 
 
 
-    filename = request.args.get("file")
-
-
-
-    if not filename:
-
-        uploaded_files = [
-
-            file for file in os.listdir(UPLOAD_FOLDER)
-
-            if os.path.isfile(os.path.join(UPLOAD_FOLDER, file))
-
-        ]
-
-
-
-        if uploaded_files:
-
-            filename = max(
-
-                uploaded_files,
-
-                key=lambda file: os.path.getmtime(
-
-                    os.path.join(UPLOAD_FOLDER, file)
-
-                )
-
-            )
-
-
-
-    total_events = 0
-
-    normal_events = 0
-
-    suspicious_events = 0
-
-    anomalies = 0
-
-
-
-    if filename:
-
-
-
-        file_path = os.path.join(
-
-            UPLOAD_FOLDER,
-
-            filename
-
-        )
-
-
-
-        if os.path.exists(file_path):
-
-
-
-            try:
-
-                with open(file_path, "r", encoding="utf-8") as file:
-
-                    log_content = file.read()
-
-
-
-            except UnicodeDecodeError:
-
-
-
-                with open(file_path, "r", encoding="latin-1") as file:
-
-                    log_content = file.read()
-
-
-
-
-
-            for line in log_content.splitlines():
-
-
-
-                line = line.strip()
-
-
-
-                if not line:
-
-                    continue
-
-
-
-                parts = line.split(" ", 3)
-
-
-
-                if len(parts) >= 4:
-
-
-
-                    total_events += 1
-
-
-
-                    level = parts[2].upper()
-
-
-
-                    if level in ["WARNING", "ERROR"]:
-
-                        suspicious_events += 1
-
-
-
-                    else:
-
-                        normal_events += 1
-
-
-
-
-
-    # Simple AI anomaly count
-
-    if suspicious_events > 0:
-
-        anomalies = suspicious_events
+    filename = get_analysis_filename()
+
+
+    events, total_events, anomalies, normal_events = analyze_log_file(filename)
+    suspicious_events = sum(
+        1
+        for event in events
+        if event["level"].upper() in {"WARNING", "ERROR"}
+    )
 
 
 
@@ -2852,7 +2915,7 @@ def reports():
 
 
 
-    filename = request.args.get("file")
+    filename = get_analysis_filename()
 
     print_view = request.args.get("print") == "1"
 
@@ -3133,8 +3196,6 @@ def reports():
         high_risk_events=high_risk_events,
 
         print_view=print_view
-
-
 
     )
 

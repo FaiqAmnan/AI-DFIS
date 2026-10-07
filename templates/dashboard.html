@@ -140,25 +140,33 @@
 
                 <div class="user-area">
 
-                    <div class="notification">
-                        <i class="fa-regular fa-bell"></i>
-                        <span class="notification-dot"></span>
-                    </div>
+                    
 
-                    <div class="user-profile">
+                    <details class="user-profile-menu">
+                        <summary class="user-profile" aria-label="Open user menu">
+                            <div class="avatar">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
 
-                        <div class="avatar">
-                            <i class="fa-solid fa-user"></i>
+                            <div class="user-info">
+                                <strong>{{ session.get("name", "User") }}</strong>
+                                <span>{{ session.get("role", "User") }}</span>
+                            </div>
+
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </summary>
+
+                        <div class="user-profile-options">
+                            <a href="{{ url_for('settings') }}">
+                                <i class="fa-solid fa-gear"></i>
+                                Settings
+                            </a>
+                            <a href="{{ url_for('logout') }}">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                Log out
+                            </a>
                         </div>
-
-                        <div class="user-info">
-                            <strong>{{ session.get("name", "User") }}</strong>
-                            <span>{{ session.get("role", "User") }}</span>
-                        </div>
-
-                        <i class="fa-solid fa-chevron-down"></i>
-
-                    </div>
+                    </details>
 
                 </div>
 

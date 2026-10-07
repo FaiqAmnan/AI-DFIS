@@ -233,6 +233,19 @@
             margin-bottom: 20px;
         }
 
+        .distribution-link {
+            display: inline-block;
+            margin: -8px 0 16px;
+            color: #4f46e5;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .distribution-link:hover {
+            text-decoration: underline;
+        }
+
         .bar {
             margin-bottom: 18px;
         }
@@ -383,20 +396,20 @@
         </a>
 
         {% if filename %}
-<a href="/timeline?file={{ filename }}" class="menu-item">
-{% else %}
-<a href="/timeline" class="menu-item">
-{% endif %}
+        <a href="/timeline?file={{ filename }}" class="menu-item">
+        {% else %}
+        <a href="/timeline" class="menu-item">
+        {% endif %}
 
             <i class="fa-solid fa-timeline"></i>
             <span>Timeline</span>
         </a>
 
         {% if filename %}
-<a href="/ai-detection?file={{ filename }}" class="menu-item">
-{% else %}
-<a href="/ai-detection" class="menu-item">
-{% endif %}
+        <a href="/ai-detection?file={{ filename }}" class="menu-item">
+        {% else %}
+        <a href="/ai-detection" class="menu-item">
+        {% endif %}
 
             <i class="fa-solid fa-robot"></i>
             <span>AI Detection</span>
@@ -406,20 +419,20 @@
         <div class="menu-title">SYSTEM</div>
 
         {% if filename %}
-<a href="/analytics?file={{ filename }}" class="menu-item active">
-{% else %}
-<a href="/analytics" class="menu-item active">
-{% endif %}
+        <a href="/analytics?file={{ filename }}" class="menu-item active">
+        {% else %}
+        <a href="/analytics" class="menu-item active">
+        {% endif %}
 
         <i class="fa-solid fa-chart-pie"></i>
         <span>Analytics</span>
     </a>
 
         {% if filename %}
-<a href="/reports?file={{ filename }}" class="menu-item">
-{% else %}
-<a href="/reports" class="menu-item">
-{% endif %}
+        <a href="/reports?file={{ filename }}" class="menu-item">
+        {% else %}
+        <a href="/reports" class="menu-item">
+        {% endif %}
 
     <i class="fa-solid fa-file-pdf"></i>
     <span>Reports</span>
@@ -473,7 +486,6 @@
         </div>
 
     </div>
-
 
     {% if filename %}
 
@@ -566,6 +578,12 @@
                 <i class="fa-solid fa-chart-column"></i>
                 Event Distribution
             </h2>
+
+            <a class="distribution-link"
+               href="{{ url_for('ai_detection', file=filename) }}">
+                View AI Detection Results
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
 
 
             {% if total_events > 0 %}

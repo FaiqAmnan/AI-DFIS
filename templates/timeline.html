@@ -415,7 +415,97 @@
             .timeline-summary {
                 grid-template-columns: 1fr;
             }
+        }
 
+        body {
+            overflow: hidden;
+        }
+
+        .workflow-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            filter: blur(5px);
+            transform: scale(1.02);
+            pointer-events: none;
+        }
+
+        body::after {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            background: rgba(15, 23, 42, 0.42);
+            content: "";
+            pointer-events: none;
+        }
+
+        .workflow-sidebar {
+            z-index: 100;
+            isolation: isolate;
+            pointer-events: none;
+        }
+
+        .workflow-sidebar::after {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            background: rgba(16, 24, 39, 0.28);
+            backdrop-filter: blur(4px);
+            content: "";
+            pointer-events: none;
+        }
+
+        .workflow-analysis-link {
+            position: relative;
+            z-index: 3;
+            pointer-events: auto;
+        }
+
+        .workflow-exit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 12px;
+            border-radius: 8px;
+            background: #b42318;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            width: fit-content;
+            margin: 0 0 12px auto;
+        }
+
+        .workflow-exit:hover {
+            background: #912018;
+            color: white;
+        }
+
+        .workflow-main {
+            position: relative;
+            z-index: 2;
+            max-height: calc(100vh - 40px);
+            margin-top: 20px;
+            margin-bottom: 20px;
+            overflow-y: auto;
+            border-radius: 14px;
+            background: #f5f7fb;
+            box-shadow: 0 20px 60px rgba(15, 23, 42, 0.28);
+        }
+
+        .next-stage-link {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .next-stage-link:hover {
+            outline: 2px solid #93c5fd;
+            outline-offset: 2px;
         }
 
         .sidebar {
@@ -501,7 +591,14 @@
 
     <!-- SIDEBAR -->
 
-    <aside class="sidebar">
+    <iframe class="workflow-backdrop"
+            src="{{ url_for('investigations') }}"
+            title="Investigations background"
+            aria-hidden="true"
+            tabindex="-1"
+            inert></iframe>
+
+    <aside class="sidebar workflow-sidebar">
 
         <div class="logo">
 
@@ -533,15 +630,15 @@
             </div>
 
 
-            <a href="/log-analysis" class="menu-item">
+            <a href="{{ url_for('log_analysis', file=filename) if filename else url_for('log_analysis') }}" class="menu-item workflow-analysis-link">
                 <i class="fa-solid fa-file-lines"></i>
                 <span>Log Analysis</span>
             </a>
 
             {% if filename %}
-<a href="/timeline?file={{ filename }}" class="menu-item active">
+<a href="{{ url_for('timeline', file=filename) }}" class="menu-item workflow-analysis-link active">
 {% else %}
-<a href="/timeline" class="menu-item active">
+<a href="{{ url_for('timeline') }}" class="menu-item workflow-analysis-link active">
 {% endif %}
 
     <i class="fa-solid fa-timeline"></i>
@@ -550,9 +647,9 @@
 </a>
 
             {% if filename %}
-<a href="/ai-detection?file={{ filename }}" class="menu-item">
+<a href="{{ url_for('ai_detection', file=filename) }}" class="menu-item workflow-analysis-link">
 {% else %}
-<a href="/ai-detection" class="menu-item">
+<a href="{{ url_for('ai_detection') }}" class="menu-item workflow-analysis-link">
 {% endif %}
 
     <i class="fa-solid fa-robot"></i>
@@ -566,16 +663,12 @@
             </div>
 
 
-            {% if filename %}
-            <a href="/analytics?file={{ filename }}" class="menu-item">
-            {% else %}
-            <a href="/analytics" class="menu-item">
-            {% endif %}
+            <a href="{{ url_for('analytics', file=filename) if filename else url_for('analytics') }}" class="menu-item">
                 <i class="fa-solid fa-chart-pie"></i>
                 <span>Analytics</span>
             </a>
 
-            <a href="#" class="menu-item">
+            <a href="{{ url_for('reports', file=filename) if filename else url_for('reports') }}" class="menu-item">
                 <i class="fa-solid fa-file-pdf"></i>
                 <span>Reports</span>
             </a>
@@ -614,8 +707,12 @@
 
     <!-- MAIN CONTENT -->
 
-    <main class="main-content">
+    <main class="main-content workflow-main">
 
+        <a href="{{ url_for('investigations') }}" class="workflow-exit">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            Exit Analysis
+        </a>
 
         <!-- HEADER -->
 
@@ -640,12 +737,7 @@
             </div>
 
 
-            <div class="status-badge">
-
-                <i class="fa-solid fa-circle-check"></i>
-                Timeline Generated
-
-            </div>
+            
 
         </div>
 
@@ -882,7 +974,8 @@
             </div>
 
 
-            <div class="summary-card">
+            <a class="summary-card next-stage-link"
+               href="{{ url_for('ai_detection', file=filename) if filename else url_for('ai_detection') }}">
 
                 <i class="fa-solid fa-arrow-right"></i>
 
@@ -894,7 +987,7 @@
                     AI anomaly detection
                 </p>
 
-            </div>
+            </a>
 
 
         </div>
